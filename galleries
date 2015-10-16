@@ -1,5 +1,5 @@
 #!/bin/bash
 DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 export PYTHONPATH=$DIR/lib:$PYTHONPATH
-SCRIPT="${0##*/}" python $DIR/source/galleries.py "$@"
+SCRIPT="${0##*/}" python $DIR/source/galleries_script.py "$@"
 

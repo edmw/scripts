@@ -1,14 +1,16 @@
 #!python
 # coding: utf-8
 
-import galleries
+import sys, os
+
+from galleries.galleries import search_galleries
 
 def galleries_list(args):
-  pass
-#  collections = index.read_collections(args.path, meta=False, verbose=False)
-#
-#  for collection in collections:
-#    index.print_collection(collection, meta=False, verbose=False)
+  galleries = search_galleries(args.path)
+  for gallery in galleries:
+    print gallery
+    for album in gallery.albums:
+      print "", album
 
 DESCRIPTION = """
 This script handles content and access rights for web galleries.
@@ -21,6 +23,7 @@ def main(args=None):
   import argparse
 
   parser = argparse.ArgumentParser(
+    prog=os.getenv('SCRIPT'),
     description=DESCRIPTION,
     epilog=EPILOG,
     formatter_class=argparse.RawDescriptionHelpFormatter
