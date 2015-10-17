@@ -1,7 +1,7 @@
 #!python
 # coding: utf-8
 
-import sys, os
+import sys, os, term
 
 from wheezy import template as wheezy
 
@@ -13,11 +13,13 @@ template_engine = wheezy.engine.Engine(
 from galleries.galleries import search_galleries
 
 def galleries_list(args):
+  term.banner("LIST OF GALLERIES")
   galleries = search_galleries(args.path)
   for gallery in galleries:
     print("{0:40} | {1}".format(gallery, ", ".join(str(x) for x in gallery.albums)))
 
 def index_create(args):
+  term.banner("CREATE INDEX")
   galleries = search_galleries(args.path)
   template = template_engine.get_template('galleries_index.html')
   print(template.render({'galleries': galleries}))
