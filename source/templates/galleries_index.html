@@ -1,0 +1,10 @@
+@require(galleries)
+<html>
+<body>
+<ul>
+@for gallery in galleries:
+  <li><a href="@{gallery.name}/p3.html">@{str(gallery)}</a></li>
+@end
+</ul>
+</body>
+</html>
