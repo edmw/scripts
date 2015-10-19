@@ -3,9 +3,10 @@
 import sys, os, os.path, re
 
 from albums import search_albums
+from access import Access, read_access
 
 class Gallery:
-  def __init__(self, path, name, label=None, year=None, month=None, day=None, countries=None, albums=None):
+  def __init__(self, path, name, label=None, year=None, month=None, day=None, countries=None, albums=None, access=None):
     self.path = path
     self.name = name
     self.label = label
@@ -14,12 +15,20 @@ class Gallery:
     self.day = day
     self.countries = countries
     self.albums = albums
+    self.access = access
 
   def __str__(self):
     return " ".join(["".join([self.year, self.month, self.day]), "".join(self.countries), self.label])
 
   def date_str(self):
     return "{0}.{1}.{2}".format(self.day, self.month, self.year)
+
+  def access_init(self, authuserfile):
+    self.access = Access(authname=str(self), authuserfile=authuserfile)
+
+  def access_write(self):
+    if self.access:
+      self.access.write(self.path)
 
   def factory(path, name):
     path = os.path.join(path, name)
@@ -45,6 +54,12 @@ class Gallery:
     # search albums
     g['albums'] = search_albums(path)
 
+    # read access
+    try:
+      g['access'] = read_access(path)
+    except ValueError, x:
+      print x
+
     return Gallery(path, name, **g)
       
   factory = staticmethod(factory)
@@ -69,3 +84,7 @@ def search_galleries(path):
 
   return galleries
 
+def search_gallery(path, name):
+  """ Search gallery with the given name at the given path.
+  """
+  return Gallery.factory(path, name)
