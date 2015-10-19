@@ -18,6 +18,9 @@ class Gallery:
   def __str__(self):
     return " ".join(["".join([self.year, self.month, self.day]), "".join(self.countries), self.label])
 
+  def date_str(self):
+    return "{0}.{1}.{2}".format(self.day, self.month, self.year)
+
   def factory(path, name):
     path = os.path.join(path, name)
     if not os.path.isdir(path):

@@ -1,10 +1,49 @@
+@require(title)
 @require(galleries)
+<!DOCTYPE html>
 <html>
+<head>
+  <meta http-equiv="Content-Language" content="de">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+  <meta name="viewport" content="width=device-width" initial-scale="1">
+
+  <title>@{title}</title>
+
+  <link rel="stylesheet" type="text/css" charset="utf-8" href="/allgemein/styles/2015index.css" />
+</head>
 <body>
-<ul>
+<div id="title">
+	<div>@{title}</div>
+</div>
+<div id="header">
+	<div class="align-left">
+		&nbsp;
+	</div>
+	<div class="align-right">
+		&nbsp;
+	</div>
+	<div class="align-middle">
+		&nbsp;
+	</div>
+</div>
+
+<div id="footer">
+</div>
+
+<div id="content">
+<ul id="gallery">
+
 @for gallery in galleries:
-  <li><a href="@{gallery.name}/p3.html">@{str(gallery)}</a></li>
+<li>
+  <span class="index">@{gallery.year}</span>&#8203;<a href="@{gallery.name}/p3.html"><img src="t/P1340075.jpg" alt="" title="@{gallery.label}" border="0" width="150" height="100" /></a>&#8203;<div class="label"><span class="title">@{gallery.label}</span><span class="date">@{gallery.date_str()}</span></div>
+</li>
 @end
+
 </ul>
+</div>
+
 </body>
+
 </html>
+

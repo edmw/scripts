@@ -22,7 +22,7 @@ def index_create(args):
   term.banner("CREATE INDEX")
   galleries = search_galleries(args.path)
   template = template_engine.get_template('galleries_index.html')
-  print(template.render({'galleries': galleries}))
+  print(template.render({'title': 'Index', 'galleries': galleries}))
 
 DESCRIPTION = """
 This script handles content and access rights for web galleries.
