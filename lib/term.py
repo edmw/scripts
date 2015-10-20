@@ -28,6 +28,11 @@ def p(text):
 def em(text):
     print("{0}{1}".format(BG.RESET + FG.RESET + Style.BRIGHT, text))
 
+def positive(text):
+    return BG.RESET + FG.GREEN + Style.NORMAL + text + FG.RESET
+def negative(text):
+    return BG.RESET + FG.RED + Style.NORMAL + text + FG.RESET
+
 def message(message):
     print(BG.RESET + FG.RESET + message)
     print

@@ -19,11 +19,11 @@ from galleries.galleries import search_galleries, search_gallery
 def galleries_list(args):
     term.banner("LIST OF GALLERIES")
     galleries = search_galleries(args.path)
-    term.em("{0:40}   {1}".format("Name", "Albums"))
+    term.em("{0:40}   {1}".format('Name', 'Albums'))
     for gallery in galleries:
         term.p("{0:40} | {1}".format(
             gallery.name,
-            ", ".join(str(x) for x in gallery.albums)
+            ', '.join(str(x) for x in gallery.albums)
         ))
 
 def index_create(args):
@@ -32,11 +32,48 @@ def index_create(args):
     template = template_engine.get_template('galleries_index.html')
     print(template.render({'title': 'Index', 'galleries': galleries}))
 
+def access_show(args):
+    term.banner("ACCESS TO WEB GALLERIES")
+    galleries = search_galleries(args.path)
+    # create sorted list of all usernames in all galleries
+    usernames = set()
+    for gallery in galleries:
+        access = gallery.access
+        if access:
+            usernames = usernames | set(access.users)
+    usernames = sorted(usernames)
+    # find the maximum length of any username
+    m = max(len(username) for username in usernames)
+    # print useernames
+    for i in reversed(range(m)):
+        c = []
+        for username in usernames:
+            if i < len(username):
+                c.append(username[len(username) - 1 - i])
+            else:
+                c.append(' ')
+        term.em("{0:40}   {1}".format(
+            'Name' if i == 0 else '',
+            '   '.join(c)
+        ))
+    # print galleries
+    for gallery in galleries:
+        c = []
+        for username in usernames:
+            a = gallery.access and username in gallery.access.users
+            c.append(term.positive('X') if a else ' ')
+        term.p("{0:40}   {1}".format(
+            gallery.name,
+            ' | '.join(c)
+        ))
+
 def access_manage_init(gallery, htpasswd):
     term.banner("INITIALIZE ACCESS TO GALLERY '{0}'".format(gallery))
     access = gallery.access
     if access == None:
         gallery.access_init(htpasswd)
+    else:
+        access.authuserfile = htpasswd
     gallery.access_write()
 
 def access_manage_list(gallery):
@@ -110,11 +147,17 @@ def main(args=None):
     subparsers_access = parser_access.add_subparsers(
         title='access commands', dest='access_command')
     subparsers_access.required = True
+    # access show command
+    parser_access_show = subparsers_access.add_parser('show',
+        help="Show access to web galleries.")
+    parser_access_show.set_defaults(function=access_show)
     # access init command
+    config_htpasswd = config['Access.Init'].get('htpasswd') if 'Access.Init' in config else None
     parser_access_init = subparsers_access.add_parser('init',
         help="Initialize access to web gallery.")
     parser_access_init.set_defaults(function=access_manage)
-    parser_access_init.add_argument('--htpasswd', required=True,
+    parser_access_init.add_argument('--htpasswd',
+        required=(config_htpasswd is None), default=config_htpasswd,
         help="Path to htpasswd file for access control")
     parser_access_init.add_argument('gallery_name',
         help="Name of web gallery to manage.")
@@ -135,13 +178,13 @@ def main(args=None):
 
     # index command
     parser_index = subparsers.add_parser('index',
-        help="Manage indexes for galleries.")
+        help="Manage indexes for web galleries.")
     subparsers_index = parser_index.add_subparsers(
         title='index commands', dest='index command')
     subparsers_index.required = True
     # index create command
     parser_index_create = subparsers_index.add_parser('create',
-        help="Create indexes for galleries.")
+        help="Create indexes for web galleries.")
     parser_index_create.set_defaults(function=index_create)
 
     try:
