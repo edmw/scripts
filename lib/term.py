@@ -22,6 +22,12 @@ def banner(*args, **kwargs):
             print(color + '\n'.join(str(arg) for arg in args[1:]))
         print(BG.RESET + FG.RESET)
 
+def p(text):
+    print("{0}{1}".format(BG.RESET + FG.RESET + Style.NORMAL, text))
+
+def em(text):
+    print("{0}{1}".format(BG.RESET + FG.RESET + Style.BRIGHT, text))
+
 def message(message):
     print(BG.RESET + FG.RESET + message)
     print
