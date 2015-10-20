@@ -103,7 +103,6 @@ class Access:
         if a.get('authuserfile') == None:
             raise ValueError("No AuthFile given")
   
-        print(a)
         return Access(**a)
 
     factory = staticmethod(factory)
