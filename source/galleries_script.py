@@ -5,7 +5,7 @@
 # pip install wheezy.template
 # pip install colorama
 
-import sys, os, term
+import sys, os, re, term
 
 from wheezy import template as wheezy
 
@@ -15,9 +15,37 @@ template_engine = wheezy.engine.Engine(
 )
 
 from galleries.galleries import search_galleries, search_gallery
+from galleries.access import Access
+
+TITLE = 'Galleries'
 
 SYMBOL_SEPARATOR = ' │ '
 SYMBOL_SEPARATOR_CLEAR = '   '
+
+def safe(value):
+    import unicodedata
+    value = unicodedata.normalize('NFKC', value)
+    value = re.sub('[^\w\s-]', '', value, flags=re.U).strip().lower()
+    return value
+
+def collect_users(galleries):
+    """ Collect list of all users in all galleries.
+    """
+    u = set()
+    for gallery in galleries:
+        access = gallery.access
+        if access:
+            u = u | set(access.users)
+    return u
+
+def collect_galleries(galleries, user):
+    """ Collect list of galleries for given user.
+    """
+    g = []
+    for gallery in galleries:
+        if gallery.access and user in gallery.access.users:
+            g.append(gallery)
+    return g
 
 def galleries_list(args):
     term.banner("LIST OF GALLERIES")
@@ -30,23 +58,57 @@ def galleries_list(args):
             SYMBOL_SEPARATOR
         ))
 
+def index_create_write(path, galleries, template, title='Index'):
+    filename = os.path.join(path, 'index.html')
+    with open(filename, 'w') as f:
+        f.write(template.render({'title': title, 'galleries': galleries}))
+
 def index_create(args):
-    term.banner("CREATE INDEX")
-    galleries = search_galleries(args.path)
+    term.banner("CREATE INDEXES")
     template = template_engine.get_template('galleries_index.html')
-    print(template.render({'title': 'Index', 'galleries': galleries}))
+
+    galleries = search_galleries(args.path)
+    index_create_write(args.path, galleries, template)
+
+    if args.users:
+        users = collect_users(galleries)
+        for user in users:
+            user_path = os.path.join(args.path, "~{0}".format(safe(user.name)))
+            if not os.path.exists(user_path):
+                os.mkdir(user_path)
+            if os.path.isdir(user_path):
+                user_galleries = collect_galleries(galleries, user)
+                index_create_write(user_path, user_galleries, template, title=user.name)
+            else:
+                raise IOError("CREATE INDEXES: could not write index for user '{0}'".format(str(user)))
+
+def index_install(args):
+    """ Install indexes: Create htaccess file with rewrite rules to
+        serve user-specific indexes.
+
+        Indexes must be created by executing 'index create' command.
+
+        NOTE: htaccess file will be overwritten!
+    """
+    term.banner("INSTALL INDEXES")
+    galleries = search_galleries(args.path)
+    users = collect_users(galleries)
+    access = Access(authname=TITLE, authuserfile=args.htpasswd)
+    access.users.extend(users)
+    access.conf.append(('RewriteEngine', 'On'))
+    access.conf.append(('RewriteBase', '/privat'))
+    access.conf.append(('RewriteCond', '%{REMOTE_user} ^.+$'))
+    access.conf.append(('RewriteRule', '^$ /privat/~%{REMOTE_user} [R,L]'))
+    access.write(args.path)
+    term.banner("DONE", type='INFO')
 
 SYMBOL_CHECKED = '✔'
 
 def access_show(args):
     term.banner("ACCESS TO WEB GALLERIES")
     galleries = search_galleries(args.path)
-    # create sorted list of all usernames in all galleries
-    users = set()
-    for gallery in galleries:
-        access = gallery.access
-        if access:
-            users = users | set(access.users)
+    # create list of all usernames in all galleries
+    users = collect_users(galleries)
     if len(users):
         users = sorted(users)
         # find the maximum length of any username
@@ -173,7 +235,7 @@ def main(args=None):
         help="Show access to web galleries.")
     parser_access_show.set_defaults(function=access_show)
     # access init command
-    config_htpasswd = config['Access.Init'].get('htpasswd') if 'Access.Init' in config else None
+    config_htpasswd = config['Access'].get('htpasswd') if 'Access' in config else None
     parser_access_init = subparsers_access.add_parser('init',
         help="Initialize access to web gallery.")
     parser_access_init.set_defaults(function=access_manage)
@@ -206,7 +268,17 @@ def main(args=None):
     # index create command
     parser_index_create = subparsers_index.add_parser('create',
         help="Create indexes for web galleries.")
+    parser_index_create.add_argument('--users', action='store_true', default=False,
+        help="Create indexes for users.")
     parser_index_create.set_defaults(function=index_create)
+    # index install command
+    config_htpasswd = config['Access'].get('htpasswd') if 'Access' in config else None
+    parser_index_install = subparsers_index.add_parser('install',
+        help="Install indexes for web galleries.")
+    parser_index_install.add_argument('--htpasswd',
+        required=(config_htpasswd is None), default=config_htpasswd,
+        help="Path to htpasswd file for access control")
+    parser_index_install.set_defaults(function=index_install)
 
     try:
         arguments = parser.parse_args() if args == None else parser.parse_args(args)

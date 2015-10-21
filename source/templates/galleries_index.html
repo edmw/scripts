@@ -32,11 +32,11 @@
 </div>
 
 <div id="content">
-<ul id="gallery">
+<ul id="gallery" class="catalog">
 
 @for gallery in galleries:
 <li>
-  <span class="index">@{gallery.year}</span>&#8203;<a href="@{gallery.name}/p3.html"><img src="t/P1340075.jpg" alt="" title="@{gallery.label}" border="0" width="150" height="100" /></a>&#8203;<div class="label"><span class="title">@{gallery.label}</span><span class="date">@{gallery.date_str()}</span></div>
+  <span class="index">@{gallery.year}</span><a href="@{gallery.name}/p3.html"><img src="t/P1340075.jpg" alt="" title="@{gallery.label}" border="0" width="150" height="100" /></a><div class="label"><span class="title">@{gallery.label}</span><span class="date">@{gallery.date_str()}</span></div>
 </li>
 @end
 

@@ -31,6 +31,7 @@ class Access:
         usernames=[]
     ):
         self.users = []
+        self.conf = []
 
         self.authname = authname
         if not self.authname:
@@ -71,12 +72,17 @@ class Access:
         return None
 
     def write(self, path):
-        def write_line(f, key, values):
-            if isinstance(values, list):
-                v = " ".join(values)
-            else:
-                v = values
-            f.write('{0} {2}{1}{2}\n'.format(key, v, '"' if ' ' in v else ''))
+        def write_line(f, key=None, values=None, quote=True):
+            if key and values:
+                if isinstance(values, list):
+                    v = " ".join(values)
+                else:
+                    v = values
+                if quote:
+                    f.write('{0} {2}{1}{2}'.format(key, v, '"' if ' ' in v else ''))
+                else:
+                    f.write('{0} {1}'.format(key, v))
+            f.write('\n')
         
         path = os.path.join(path, ACCESS_FILE_NAME)
         with open(path, 'w') as f:
@@ -87,8 +93,11 @@ class Access:
             if self.authuserfile:
                 write_line(f, 'AuthUserFile', self.authuserfile)
             for user in self.users:
-                write_line(f, 'Require user', user)
-  
+                write_line(f, 'Require user', user.name)
+            write_line(f)
+            for c in self.conf:
+                write_line(f, c[0], c[1], quote=False)
+
     def factory(lines):
         def unpack(sequence, n):
             it = iter(sequence)
