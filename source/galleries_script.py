@@ -16,14 +16,18 @@ template_engine = wheezy.engine.Engine(
 
 from galleries.galleries import search_galleries, search_gallery
 
+SYMBOL_SEPARATOR = ' │ '
+SYMBOL_SEPARATOR_CLEAR = '   '
+
 def galleries_list(args):
     term.banner("LIST OF GALLERIES")
     galleries = search_galleries(args.path)
     term.em("{0:40}   {1}".format('Name', 'Albums'))
     for gallery in galleries:
-        term.p("{0:40} | {1}".format(
+        term.p("{0:40}{2}{1}".format(
             gallery.name,
-            ', '.join(str(x) for x in gallery.albums)
+            ', '.join(str(x) for x in gallery.albums),
+            SYMBOL_SEPARATOR
         ))
 
 def index_create(args):
@@ -31,6 +35,8 @@ def index_create(args):
     galleries = search_galleries(args.path)
     template = template_engine.get_template('galleries_index.html')
     print(template.render({'title': 'Index', 'galleries': galleries}))
+
+SYMBOL_CHECKED = '✔'
 
 def access_show(args):
     term.banner("ACCESS TO WEB GALLERIES")
@@ -54,9 +60,10 @@ def access_show(args):
                     c.append(name[len(name) - 1 - i])
                 else:
                     c.append(' ')
-            term.em("{0:40}   {1}".format(
+            term.em("{0:40}{2}{1}".format(
                 'Name' if i == 0 else '',
-                '   '.join(c)
+                '   '.join(c),
+                SYMBOL_SEPARATOR_CLEAR
             ))
         # print galleries
         for gallery in galleries:
@@ -66,16 +73,16 @@ def access_show(args):
                     # user has access to gallery
                     if user.pwhash:
                         # user has password
-                        c.append(term.positive('X'))
+                        c.append(term.positive(SYMBOL_CHECKED))
                     else:
                         # user has no password
-                        c.append(term.negative('X'))
+                        c.append(term.negative(SYMBOL_CHECKED))
                 else:
                     # user has no access to gallery
                     c.append(' ')
             term.p("{0:40}   {1}".format(
                 gallery.name,
-                ' | '.join(c)
+                SYMBOL_SEPARATOR.join(c)
             ))
     else:
         term.banner("NO ACCESS FOR GALLERIES", type='ERROR')
@@ -91,11 +98,12 @@ def access_manage_init(gallery, htpasswd):
 
 def access_manage_list(gallery):
     term.banner("LIST ACCESS TO GALLERY '{0}'".format(gallery))
-    term.em("{0:40}   {1}".format("Name", "Password"))
+    term.em("{0:40}{2}{1}".format("Name", "Password", SYMBOL_SEPARATOR_CLEAR))
     for user in gallery.access.users:
-        term.p("{0:40} | {1}".format(
-            user,
-            "***" if gallery.access.get_password(user) else "???"
+        term.p("{0:40}{2}{1}".format(
+            str(user),
+            '***' if gallery.access.get_password(user) else '???',
+            SYMBOL_SEPARATOR
         ))
 
 def access_manage_adduser(gallery, username):
