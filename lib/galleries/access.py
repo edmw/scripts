@@ -2,14 +2,36 @@
 
 import sys, os, os.path, shlex
 
+class User:
+    def __init__(self, name, pwhash=None):
+        self.name = name
+        self.pwhash = pwhash
+
+    def __str__(self):
+        return self.name
+
+    def __lt__(self, other):
+        return self.name < other.name
+
+    __instances = {}
+
+    def factory(name, pwhash=None):
+        if not User.__instances.get(name):
+            User.__instances[name] = User(name, pwhash)
+        return User.__instances.get(name)
+
+    factory = staticmethod(factory)
+
 class Access:
     def __init__(self,
         authname=None,
         authtype=None,
         authbasicprovider=None,
         authuserfile=None,
-        users=[]
+        usernames=[]
     ):
+        self.users = []
+
         self.authname = authname
         if not self.authname:
             self.authname = 'access'
@@ -20,16 +42,26 @@ class Access:
         if not self.authbasicprovider:
             self.authbasicprovider = 'file'
         self.authuserfile = authuserfile
+        self.authuserhashes = None
         if self.authuserfile:
-            self.__load_authuserfile(self.authuserfile)
-        self.users = users
+            self.authuserhashes = self.__load_authuserfile(self.authuserfile)
+
+        for username in usernames:
+            self.add_user(username)
 
     def __load_authuserfile(self, filename):
-        pass
+        pwhashes = {}
+        with open(filename) as f:
+            for line in f:
+                if ':' in line:
+                    name, pwhash = line.rstrip().split(':', 1)
+                    pwhashes[name] = pwhash
+        return pwhashes
 
     def add_user(self, name):
-        if not name in self.users:
-            self.users.append(name)
+        user = User.factory(name, pwhash=self.authuserhashes.get(name))
+        if not user in self.users:
+            self.users.append(user)
 
     def get_password(self, user):
         """ Get password (encrypted) for the given user.
@@ -85,12 +117,12 @@ class Access:
                             return 'user', values[0]
             return None, None
 
-        a = { 'users': [] }
+        a = { 'usernames': [] }
         for line in lines:
             key, values = parse(line)
             if key:
                 if key == 'user':
-                    a['users'].append(values)
+                    a['usernames'].append(values)
                 else:
                     a[key] = values
 

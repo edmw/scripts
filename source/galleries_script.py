@@ -36,36 +36,49 @@ def access_show(args):
     term.banner("ACCESS TO WEB GALLERIES")
     galleries = search_galleries(args.path)
     # create sorted list of all usernames in all galleries
-    usernames = set()
+    users = set()
     for gallery in galleries:
         access = gallery.access
         if access:
-            usernames = usernames | set(access.users)
-    usernames = sorted(usernames)
-    # find the maximum length of any username
-    m = max(len(username) for username in usernames)
-    # print useernames
-    for i in reversed(range(m)):
-        c = []
-        for username in usernames:
-            if i < len(username):
-                c.append(username[len(username) - 1 - i])
-            else:
-                c.append(' ')
-        term.em("{0:40}   {1}".format(
-            'Name' if i == 0 else '',
-            '   '.join(c)
-        ))
-    # print galleries
-    for gallery in galleries:
-        c = []
-        for username in usernames:
-            a = gallery.access and username in gallery.access.users
-            c.append(term.positive('X') if a else ' ')
-        term.p("{0:40}   {1}".format(
-            gallery.name,
-            ' | '.join(c)
-        ))
+            users = users | set(access.users)
+    if len(users):
+        users = sorted(users)
+        # find the maximum length of any username
+        m = max(len(user.name) for user in users)
+        # print useernames
+        for i in reversed(range(m)):
+            c = []
+            for user in users:
+                name = user.name
+                if i < len(name):
+                    c.append(name[len(name) - 1 - i])
+                else:
+                    c.append(' ')
+            term.em("{0:40}   {1}".format(
+                'Name' if i == 0 else '',
+                '   '.join(c)
+            ))
+        # print galleries
+        for gallery in galleries:
+            c = []
+            for user in users:
+                if gallery.access and user in gallery.access.users:
+                    # user has access to gallery
+                    if user.pwhash:
+                        # user has password
+                        c.append(term.positive('X'))
+                    else:
+                        # user has no password
+                        c.append(term.negative('X'))
+                else:
+                    # user has no access to gallery
+                    c.append(' ')
+            term.p("{0:40}   {1}".format(
+                gallery.name,
+                ' | '.join(c)
+            ))
+    else:
+        term.banner("NO ACCESS FOR GALLERIES", type='ERROR')
 
 def access_manage_init(gallery, htpasswd):
     term.banner("INITIALIZE ACCESS TO GALLERY '{0}'".format(gallery))

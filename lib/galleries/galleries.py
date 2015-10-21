@@ -70,7 +70,7 @@ class Gallery:
         try:
             g['access'] = read_access(path)
         except ValueError as x:
-            g['accees'] = None
+            g['access'] = None
             logging.warning("{0}".format(x))
 
         return Gallery(path, name, **g)
