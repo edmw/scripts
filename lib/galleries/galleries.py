@@ -73,7 +73,7 @@ class Gallery:
         g['countries'] = [t[x:x+2] for x in range(0, len(t), 2)]
         # parse name: gallery label
         t = m.group(6) or ""
-        g['label'] = " ".join(word.capitalize() for word in t.split("_"))
+        g['label'] = " ".join(word.title() for word in t.split("_"))
 
         # search albums
         g['albums'] = search_albums(path, load=load_albums)
