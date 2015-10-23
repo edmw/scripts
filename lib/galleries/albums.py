@@ -17,7 +17,7 @@ class Album:
     def __str__(self):
         return " ".join([self.label])
 
-    def factory(path, name):
+    def factory(path, name, load=False):
         path = os.path.join(path, name)
         if not os.path.isfile(path):
             return None
@@ -33,11 +33,12 @@ class Album:
         a['label'] = m.group(1)
 
         # parse html
-        with open(path) as f:
-            html = BeautifulSoup(f.read(), 'html.parser')
-            soup = html.find('meta', attrs={'name': 'description'})
-            if soup:
-                a['description'] = soup.get('content')
+        if load:
+            with open(path) as f:
+                html = BeautifulSoup(f.read(), 'html.parser')
+                soup = html.find('meta', attrs={'name': 'description'})
+                if soup:
+                    a['description'] = soup.get('content')
 
         return Album(path, name, **a)
       
@@ -45,7 +46,7 @@ class Album:
 
 ALBUM_NAME_PATTERN = re.compile('^([p][234])\.html$')
 
-def search_albums(path):
+def search_albums(path, load=False):
     """ Search albums at the given path.
     """
     albums = []
@@ -56,7 +57,7 @@ def search_albums(path):
     ]
 
     for name in reversed(sorted(names)):
-        album = Album.factory(path, name)
+        album = Album.factory(path, name, load=load)
         if album:
             albums.append(album)
   

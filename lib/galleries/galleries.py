@@ -52,12 +52,14 @@ class Gallery:
         if self.access:
             self.access.write(self.path)
 
-    def factory(path, name):
+    def factory(path, name, load_access=False, load_albums=False):
         path = os.path.join(path, name)
         if not os.path.isdir(path):
             return None
 
         g = {}
+        g['albums'] = None
+        g['access'] = None
 
         # parse name
         m = GALLERY_NAME_PATTERN.match(name)
@@ -74,14 +76,14 @@ class Gallery:
         g['label'] = " ".join(word.capitalize() for word in t.split("_"))
 
         # search albums
-        g['albums'] = search_albums(path)
+        g['albums'] = search_albums(path, load=load_albums)
 
         # read access
-        try:
-            g['access'] = read_access(path)
-        except ValueError as x:
-            g['access'] = None
-            logging.warning("{0}".format(x))
+        if load_access:
+            try:
+                g['access'] = read_access(path)
+            except ValueError as x:
+                logging.warning("{0}".format(x))
 
         return Gallery(path, name, **g)
       
@@ -89,7 +91,7 @@ class Gallery:
 
 GALLERY_NAME_PATTERN = re.compile('^(\d\d\d\d)(\d\d)(\d\d)_([A-Z]+)(_(.*)){0,1}$')
 
-def search_galleries(path):
+def search_galleries(path, load_access=False, load_albums=False, progress=None):
     """ Search galleries at the given path.
 
         A gallery is a directory with its name matching the gallery name pattern.
@@ -103,15 +105,22 @@ def search_galleries(path):
         if os.path.isdir(os.path.join(path, name))
             and GALLERY_NAME_PATTERN.match(name)
     ]
+    non = len(names)
+    ion = 0
     for name in reversed(sorted(names)):
-        gallery = Gallery.factory(path, name)
+        gallery = Gallery.factory(path, name,
+            load_access=load_access, load_albums=load_albums
+        )
         if gallery:
             galleries.append(gallery)
+        if progress:
+            progress(ion, non)
+        ion = ion + 1
 
     return galleries
 
-def search_gallery(path, name):
+def search_gallery(path, name, load_access=False):
     """ Search gallery with the given name at the given path.
     """
-    return Gallery.factory(path, name)
+    return Gallery.factory(path, name, load_access=load_access)
 

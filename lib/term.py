@@ -43,10 +43,11 @@ def in_password(prompt):
     return password
 
 class Progress():
-    def __init__(self, total, size = 72):
+    def __init__(self, total, size = 72, title='Progress:'):
         self.total = total
         self.size = size
         self.hashes = None
+        self.title = title
     def progress(self, index, total = None):
         if not total:
             total = self.total
@@ -57,7 +58,13 @@ class Progress():
         if self.hashes == None or self.hashes != hashes:
             self.hashes = hashes
             spaces = ' ' * (self.size - len(hashes))
-            sys.stdout.write("\rProgress: [{0}] {1}%".format(hashes + spaces, int(round(percent * 100))))
+            sys.stdout.write(
+                "\r{2} [{0}] {1}%".format(
+                    hashes + spaces,
+                    int(round(percent * 100)),
+                    self.title
+                )
+            )
             sys.stdout.flush()
     def finish(self, total = None):
         if not total:

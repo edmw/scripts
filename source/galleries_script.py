@@ -51,7 +51,9 @@ def collect_galleries(galleries, user):
 
 def galleries_list(args):
     term.banner("LIST OF GALLERIES")
+
     galleries = search_galleries(args.fspath)
+
     term.em("{0:40}   {1}".format('Name', 'Albums'))
     for gallery in galleries:
         term.p("{0:40}{2}{1}".format(
@@ -73,7 +75,12 @@ def index_create_write(fspath, galleries, path='./', title='Index'):
 def index_create(args):
     term.banner("CREATE INDEXES")
 
-    galleries = search_galleries(args.fspath)
+    progress = term.Progress(0, title='Searching:')
+    galleries = search_galleries(args.fspath,
+        load_access=True, load_albums=True, progress=progress.progress
+    )
+    progress.finish()
+
     index_create_write(args.fspath, galleries, path=args.wspath)
 
     if args.users:
@@ -99,7 +106,9 @@ def index_install(args):
         NOTE: htaccess file will be overwritten!
     """
     term.banner("INSTALL INDEXES")
-    galleries = search_galleries(args.fspath)
+
+    galleries = search_galleries(args.fspath, load_access=True)
+
     users = collect_users(galleries)
     access = Access(authname=TITLE, authuserfile=args.htpasswd)
     access.users.extend(users)
@@ -114,7 +123,9 @@ SYMBOL_CHECKED = '✔'
 
 def access_show(args):
     term.banner("ACCESS TO WEB GALLERIES")
-    galleries = search_galleries(args.fspath)
+
+    galleries = search_galleries(args.fspath, load_access=True)
+
     # create list of all usernames in all galleries
     users = collect_users(galleries)
     if len(users):
@@ -185,7 +196,7 @@ def access_manage_adduser(gallery, username):
     term.banner("DONE", type='INFO')
 
 def access_manage(args):
-    gallery = search_gallery(args.fspath, args.gallery_name)
+    gallery = search_gallery(args.fspath, args.gallery_name, load_access=True)
     if gallery:
         if args.access_command == 'init':
             access_manage_init(gallery, args.htpasswd)
