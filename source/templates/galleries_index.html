@@ -1,3 +1,4 @@
+@require(path)
 @require(title)
 @require(galleries)
 <!DOCTYPE html>
@@ -36,7 +37,23 @@
 
 @for gallery in galleries:
 <li>
-  <span class="index">@{gallery.year}</span><a href="@{gallery.name}/p3.html"><img src="t/P1340075.jpg" alt="" title="@{gallery.label}" border="0" width="150" height="100" /></a><div class="label"><span class="title">@{gallery.label}</span><span class="date">@{gallery.date_str()}</span></div>
+<span class="index">@{gallery.year}</span><span class="image"><a href="@{path}@{gallery.name}/p3.html"><img src="@{path}@{gallery.name}/p3.jpg" alt="" title="@{gallery.label}" border="0" width="150" height="100" /></a></span>
+<div class="label">
+    <span class="title">@{gallery.label}</span><span class="date">@{gallery.date_str()}</span>
+@for album in gallery.albums:
+    <div>
+    @if album.label == 'p4':
+        <a href="@{path}@{gallery.name}/@{album.name}">die Besten</a>
+    @elif album.label == 'p3':
+        <a href="@{path}@{gallery.name}/@{album.name}">die Auswahl</a>
+    @elif album.label == 'p2':
+        <a href="@{path}@{gallery.name}/@{album.name}">alle Bilder</a>
+    @else:
+        <a href="@{path}@{gallery.name}/@{album.name}">@{album.label}</a>
+    @end
+    </div>
+@end
+</div>
 </li>
 @end
 

@@ -10,7 +10,9 @@ import sys, os, re, term
 from wheezy import template as wheezy
 
 template_engine = wheezy.engine.Engine(
-    loader=wheezy.loader.FileLoader(['/home/dreizehn/scripts/source/templates']),
+    loader=wheezy.loader.FileLoader([
+        os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+    ]),
     extensions=[wheezy.ext.core.CoreExtension()]
 )
 
@@ -49,7 +51,7 @@ def collect_galleries(galleries, user):
 
 def galleries_list(args):
     term.banner("LIST OF GALLERIES")
-    galleries = search_galleries(args.path)
+    galleries = search_galleries(args.fspath)
     term.em("{0:40}   {1}".format('Name', 'Albums'))
     for gallery in galleries:
         term.p("{0:40}{2}{1}".format(
@@ -58,29 +60,35 @@ def galleries_list(args):
             SYMBOL_SEPARATOR
         ))
 
-def index_create_write(path, galleries, template, title='Index'):
-    filename = os.path.join(path, 'index.html')
+def index_create_write(fspath, galleries, template, path='./', title='Index'):
+    filename = os.path.join(fspath, 'index.html')
     with open(filename, 'w') as f:
-        f.write(template.render({'title': title, 'galleries': galleries}))
+        f.write(template.render({
+            'path': path,
+            'title': title,
+            'galleries': galleries
+        }))
 
 def index_create(args):
     term.banner("CREATE INDEXES")
     template = template_engine.get_template('galleries_index.html')
 
-    galleries = search_galleries(args.path)
-    index_create_write(args.path, galleries, template)
+    galleries = search_galleries(args.fspath)
+    index_create_write(args.fspath, galleries, template, path=args.wspath)
 
     if args.users:
         users = collect_users(galleries)
         for user in users:
-            user_path = os.path.join(args.path, "~{0}".format(safe(user.name)))
+            user_path = os.path.join(args.fspath, "~{0}".format(safe(user.name)))
             if not os.path.exists(user_path):
                 os.mkdir(user_path)
             if os.path.isdir(user_path):
                 user_galleries = collect_galleries(galleries, user)
-                index_create_write(user_path, user_galleries, template, title=user.name)
+                index_create_write(user_path, user_galleries, template,
+                    path=args.wspath, title=user.name)
             else:
                 raise IOError("CREATE INDEXES: could not write index for user '{0}'".format(str(user)))
+    term.banner("DONE", type='INFO')
 
 def index_install(args):
     """ Install indexes: Create htaccess file with rewrite rules to
@@ -91,22 +99,22 @@ def index_install(args):
         NOTE: htaccess file will be overwritten!
     """
     term.banner("INSTALL INDEXES")
-    galleries = search_galleries(args.path)
+    galleries = search_galleries(args.fspath)
     users = collect_users(galleries)
     access = Access(authname=TITLE, authuserfile=args.htpasswd)
     access.users.extend(users)
     access.conf.append(('RewriteEngine', 'On'))
-    access.conf.append(('RewriteBase', '/privat'))
+    access.conf.append(('RewriteBase', args.wspath))
     access.conf.append(('RewriteCond', '%{REMOTE_user} ^.+$'))
-    access.conf.append(('RewriteRule', '^$ /privat/~%{REMOTE_user} [R,L]'))
-    access.write(args.path)
+    access.conf.append(('RewriteRule', "^$ {0}~%{{REMOTE_user}} [R,L]".format(args.wspath)))
+    access.write(args.fspath)
     term.banner("DONE", type='INFO')
 
 SYMBOL_CHECKED = '✔'
 
 def access_show(args):
     term.banner("ACCESS TO WEB GALLERIES")
-    galleries = search_galleries(args.path)
+    galleries = search_galleries(args.fspath)
     # create list of all usernames in all galleries
     users = collect_users(galleries)
     if len(users):
@@ -153,10 +161,12 @@ def access_manage_init(gallery, htpasswd):
     term.banner("INITIALIZE ACCESS TO GALLERY '{0}'".format(gallery))
     access = gallery.access
     if access == None:
-        gallery.access_init(htpasswd)
+        gallery.access_init("Galleries", htpasswd)
     else:
+        access.authname = "Galleries"
         access.authuserfile = htpasswd
     gallery.access_write()
+    term.banner("DONE", type='INFO')
 
 def access_manage_list(gallery):
     term.banner("LIST ACCESS TO GALLERY '{0}'".format(gallery))
@@ -172,9 +182,10 @@ def access_manage_adduser(gallery, username):
     term.banner("ADD ACCESS FOR USER '{1}' TO GALLERY '{0}'".format(gallery, username))
     gallery.access.add_user(username)
     gallery.access_write()
+    term.banner("DONE", type='INFO')
 
 def access_manage(args):
-    gallery = search_gallery(args.path, args.gallery_name)
+    gallery = search_gallery(args.fspath, args.gallery_name)
     if gallery:
         if args.access_command == 'init':
             access_manage_init(gallery, args.htpasswd)
@@ -189,7 +200,7 @@ def access_manage(args):
                 term.banner("NO ACCESS INFORMATION FOR GALLERY '{0}'".format(gallery),
                     type="ERROR")
     else:
-        term.banner("GALLERY {0} NOT FOUND AT {1}".format(args.gallery_name, args.path),
+        term.banner("GALLERY {0} NOT FOUND AT {1}".format(args.gallery_name, args.fspath),
             type='ERROR')
 
 DESCRIPTION = """
@@ -199,10 +210,16 @@ This script handles content and access rights for web galleries.
 EPILOG = """
 """
 
-def main(args=None):
-    import argparse
-    import configparser
+import argparse
+import configparser
 
+def path_argument(value):
+    if not value.endswith('/'):
+        raise argparse.ArgumentError(None,
+            "{0} must end with a slash '/'".format('path'))
+    return value
+
+def main(args=None):
     config = configparser.ConfigParser()
     config.read('galleries.ini')
 
@@ -212,8 +229,10 @@ def main(args=None):
         epilog=EPILOG,
         formatter_class=argparse.RawDescriptionHelpFormatter
     )
-    parser.add_argument('--path', default='/var/www/web',
-        help="Path to web galleries. Defaults to '/var/www/web'")
+    parser.add_argument('--fspath', type=path_argument, default='/var/www/web/',
+        help="Path to web galleries on filesystem. Defaults to '/var/www/web/'.")
+    parser.add_argument('--wspath', type=path_argument, default='/',
+        help="Path to web galleries on webserver. Defaults to '/'.")
     if 'Defaults' in config:
         parser.set_defaults(**config['Defaults'])
     subparsers = parser.add_subparsers(title='commands', dest='command')

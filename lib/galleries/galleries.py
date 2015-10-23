@@ -35,8 +35,8 @@ class Gallery:
     def date_str(self):
         return "{0}.{1}.{2}".format(self.day, self.month, self.year)
 
-    def access_init(self, authuserfile):
-        self.access = Access(authname=str(self), authuserfile=authuserfile)
+    def access_init(self, authname, authuserfile):
+        self.access = Access(authname=authname, authuserfile=authuserfile)
 
     def access_write(self):
         if self.access:
