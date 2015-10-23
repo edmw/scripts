@@ -1,6 +1,8 @@
 # coding: utf-8
 
-import sys, os, os.path, re, logging
+import sys, os, os.path, re, logging, gettext
+
+import pycountry
 
 from galleries.albums import search_albums
 from galleries.access import Access, read_access
@@ -34,6 +36,14 @@ class Gallery:
 
     def date_str(self):
         return "{0}.{1}.{2}".format(self.day, self.month, self.year)
+
+    def countries_str(self):
+        c = []
+        for alpha2 in self.countries:
+            country = pycountry.countries.get(alpha2=alpha2)
+            if country:
+                c.append(_(country.name))
+        return ' '.join(c)
 
     def access_init(self, authname, authuserfile):
         self.access = Access(authname=authname, authuserfile=authuserfile)

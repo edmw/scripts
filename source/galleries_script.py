@@ -2,23 +2,22 @@
 # coding: utf-8
 #
 # Dependencies:
+# pip install beautifulsoup4
+# pip install html5lib
 # pip install wheezy.template
+# pip install wheezy.html
+# pip install pytidylib
+# pip install pycountry
 # pip install colorama
 
 import sys, os, re, term
 
-from wheezy import template as wheezy
-template_engine = wheezy.engine.Engine(
-    loader=wheezy.loader.FileLoader([
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-    ]),
-    extensions=[wheezy.ext.core.CoreExtension()]
-)
-from wheezy.html.utils import escape_html
-template_engine.global_vars.update({'e': escape_html})
-
 from galleries.galleries import search_galleries, search_gallery
 from galleries.access import Access
+
+from templates import TemplateEngine
+
+template_engine = TemplateEngine(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates'))
 
 TITLE = 'Galleries'
 
@@ -61,21 +60,21 @@ def galleries_list(args):
             SYMBOL_SEPARATOR
         ))
 
-def index_create_write(fspath, galleries, template, path='./', title='Index'):
+def index_create_write(fspath, galleries, path='./', title='Index'):
     filename = os.path.join(fspath, 'index.html')
-    with open(filename, 'w') as f:
-        f.write(template.render({
+    with open(filename, 'wb') as f:
+        html = template_engine.render('galleries_index.html', {
             'path': path,
             'title': title,
             'galleries': galleries
-        }))
+        })
+        f.write(html)
 
 def index_create(args):
     term.banner("CREATE INDEXES")
-    template = template_engine.get_template('galleries_index.html')
 
     galleries = search_galleries(args.fspath)
-    index_create_write(args.fspath, galleries, template, path=args.wspath)
+    index_create_write(args.fspath, galleries, path=args.wspath)
 
     if args.users:
         users = collect_users(galleries)
@@ -85,7 +84,7 @@ def index_create(args):
                 os.mkdir(user_path)
             if os.path.isdir(user_path):
                 user_galleries = collect_galleries(galleries, user)
-                index_create_write(user_path, user_galleries, template,
+                index_create_write(user_path, user_galleries,
                     path=args.wspath, title=user.name)
             else:
                 raise IOError("CREATE INDEXES: could not write index for user '{0}'".format(str(user)))

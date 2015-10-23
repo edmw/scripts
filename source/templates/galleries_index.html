@@ -38,23 +38,29 @@
 @for gallery in galleries:
 @if gallery.albums:
 <li>
-<span class="index">@gallery.year!e</span><span class="image"><a href="@{path}@{gallery.name}/@{gallery.albums[0].name}"><img src="@{path}@{gallery.name}/p3.jpg" alt="" title="@{gallery.label}" border="0" width="150" height="100" /></a></span>
-<div class="label">
-    <div class="title">@gallery.label!e</div><div class="description">@gallery.albums[0].description!e</div><span class="date">@{gallery.date_str()!!e}</span>
-@for album in gallery.albums:
-    <div>
-    @if album.label == 'p4':
-        <a href="@{path}@{gallery.name}/@{album.name}">die Besten</a>
-    @elif album.label == 'p3':
-        <a href="@{path}@{gallery.name}/@{album.name}">die Auswahl</a>
-    @elif album.label == 'p2':
-        <a href="@{path}@{gallery.name}/@{album.name}">alle Bilder</a>
-    @else:
-        <a href="@{path}@{gallery.name}/@{album.name}">@{album.label}</a>
-    @end
+    <span class="index">@gallery.year!e</span><span class="image"><a href="@{path}@{gallery.name}/@{gallery.albums[0].name}"><img src="@{path}@{gallery.name}/p3.jpg" alt="" title="@{gallery.label}" border="0" width="150" height="100" /></a></span>
+    <div class="label">
+        <span class="date">@{gallery.date_str()!!e}</span>
+        @if gallery.label:
+            <div class="title">@gallery.label!e</div>
+        @else:
+            <div class="title">@{gallery.countries_str()!!e}</div>
+        @end
+        <div class="description">@gallery.albums[0].description!e</div>
+        @for album in gallery.albums:
+            <div>
+                @if album.label == 'p4':
+                    <a href="@{path}@{gallery.name}/@{album.name}">die Besten</a>
+                @elif album.label == 'p3':
+                    <a href="@{path}@{gallery.name}/@{album.name}">die Auswahl</a>
+                @elif album.label == 'p2':
+                    <a href="@{path}@{gallery.name}/@{album.name}">alle Bilder</a>
+                @else:
+                    <a href="@{path}@{gallery.name}/@{album.name}">@{album.label}</a>
+                @end
+            </div>
+        @end
     </div>
-@end
-</div>
 </li>
 @end
 @end
