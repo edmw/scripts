@@ -15,7 +15,7 @@
 </head>
 <body>
 <div id="title">
-	<div>@{title}</div>
+	<div>@title!e</div>
 </div>
 <div id="header">
 	<div class="align-left">
@@ -36,10 +36,11 @@
 <ul id="gallery" class="catalog">
 
 @for gallery in galleries:
+@if gallery.albums:
 <li>
-<span class="index">@{gallery.year}</span><span class="image"><a href="@{path}@{gallery.name}/p3.html"><img src="@{path}@{gallery.name}/p3.jpg" alt="" title="@{gallery.label}" border="0" width="150" height="100" /></a></span>
+<span class="index">@gallery.year!e</span><span class="image"><a href="@{path}@{gallery.name}/@{gallery.albums[0].name}"><img src="@{path}@{gallery.name}/p3.jpg" alt="" title="@{gallery.label}" border="0" width="150" height="100" /></a></span>
 <div class="label">
-    <span class="title">@{gallery.label}</span><span class="date">@{gallery.date_str()}</span>
+    <div class="title">@gallery.label!e</div><div class="description">@gallery.albums[0].description!e</div><span class="date">@{gallery.date_str()!!e}</span>
 @for album in gallery.albums:
     <div>
     @if album.label == 'p4':
@@ -55,6 +56,7 @@
 @end
 </div>
 </li>
+@end
 @end
 
 </ul>

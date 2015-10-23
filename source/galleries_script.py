@@ -8,13 +8,14 @@
 import sys, os, re, term
 
 from wheezy import template as wheezy
-
 template_engine = wheezy.engine.Engine(
     loader=wheezy.loader.FileLoader([
         os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
     ]),
     extensions=[wheezy.ext.core.CoreExtension()]
 )
+from wheezy.html.utils import escape_html
+template_engine.global_vars.update({'e': escape_html})
 
 from galleries.galleries import search_galleries, search_gallery
 from galleries.access import Access
