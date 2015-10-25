@@ -23,10 +23,10 @@ def banner(*args, **kwargs):
         print(BG.RESET + FG.RESET)
 
 def p(text):
-    print("{0}{1}".format(BG.RESET + FG.RESET + Style.NORMAL, text))
+    return "{0}{1}".format(BG.RESET + FG.RESET + Style.NORMAL, text)
 
 def em(text):
-    print("{0}{1}".format(BG.RESET + FG.RESET + Style.BRIGHT, text))
+    return "{0}{1}".format(BG.RESET + FG.RESET + Style.BRIGHT, text)
 
 def positive(text):
     return BG.RESET + FG.GREEN + Style.NORMAL + text + FG.RESET

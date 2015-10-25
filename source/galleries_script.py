@@ -24,11 +24,21 @@ TITLE = 'Galleries'
 SYMBOL_SEPARATOR = ' │ '
 SYMBOL_SEPARATOR_CLEAR = '   '
 
+NAME_LENGTH = 40
+
 def safe(value):
     import unicodedata
     value = unicodedata.normalize('NFKC', value)
     value = re.sub('[^\w\s-]', '', value, flags=re.U).strip().lower()
     return value
+
+def print_gallery_name(name, transform=term.p):
+    if len(name) > NAME_LENGTH:
+        name = "{0}...".format(name[0:NAME_LENGTH - 3])
+    else:
+        name = name + ' ' * (NAME_LENGTH - len(name))
+    name = name if not transform else transform(name)
+    print("{0}".format(name), end='')
 
 def collect_users(galleries):
     """ Collect list of all users in all galleries.
@@ -54,13 +64,14 @@ def galleries_list(args):
 
     galleries = search_galleries(args.fspath)
 
-    term.em("{0:40}   {1}".format('Name', 'Albums'))
+    print_gallery_name('Name', term.em)
+    print(term.em("{1}{0}".format('Albums', SYMBOL_SEPARATOR_CLEAR)))
     for gallery in galleries:
-        term.p("{0:40}{2}{1}".format(
-            gallery.name,
+        print_gallery_name(gallery.name)
+        print(term.p("{1}{0}".format(
             ', '.join(str(x) for x in gallery.albums),
             SYMBOL_SEPARATOR
-        ))
+        )))
 
 def index_create_write(fspath, galleries, path='./', title='Index'):
     filename = os.path.join(fspath, 'index.html')
@@ -141,11 +152,11 @@ def access_show(args):
                     c.append(name[len(name) - 1 - i])
                 else:
                     c.append(' ')
-            term.em("{0:40}{2}{1}".format(
-                'Name' if i == 0 else '',
+            print_gallery_name('Name' if i == 0 else '', term.em)
+            print(term.em("{1}{0}".format(
                 '   '.join(c),
                 SYMBOL_SEPARATOR_CLEAR
-            ))
+            )))
         # print galleries
         for gallery in galleries:
             c = []
@@ -161,10 +172,11 @@ def access_show(args):
                 else:
                     # user has no access to gallery
                     c.append(' ')
-            term.p("{0:40}   {1}".format(
-                gallery.name,
-                SYMBOL_SEPARATOR.join(c)
-            ))
+            print_gallery_name(gallery.name, term.p if gallery.access else term.negative)
+            print(term.p("{1}{0}".format(
+                SYMBOL_SEPARATOR.join(c),
+                SYMBOL_SEPARATOR_CLEAR
+            )))
     else:
         term.banner("NO ACCESS FOR GALLERIES", type='ERROR')
 
@@ -181,13 +193,14 @@ def access_manage_init(gallery, htpasswd):
 
 def access_manage_list(gallery):
     term.banner("LIST ACCESS TO GALLERY '{0}'".format(gallery))
-    term.em("{0:40}{2}{1}".format("Name", "Password", SYMBOL_SEPARATOR_CLEAR))
+    print_gallery_name('Name', term.em)
+    print(term.em("{1}{0}".format('Password', SYMBOL_SEPARATOR_CLEAR)))
     for user in gallery.access.users:
-        term.p("{0:40}{2}{1}".format(
-            str(user),
+        print_gallery_name(str(user))
+        print(term.p("{1}{0}".format(
             '***' if gallery.access.get_password(user) else '???',
             SYMBOL_SEPARATOR
-        ))
+        )))
 
 def access_manage_adduser(gallery, username):
     term.banner("ADD ACCESS FOR USER '{1}' TO GALLERY '{0}'".format(gallery, username))
