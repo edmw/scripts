@@ -12,7 +12,11 @@
 
 import sys, os, re, term
 
-from galleries.galleries import search_galleries, search_gallery
+from galleries_script_common import GSError
+from galleries_script_common import get_gallery, get_album_in_gallery
+from galleries_script_album import album_setcover
+
+from galleries.galleries import search_galleries
 from galleries.access import Access
 
 from templates import TemplateEngine
@@ -42,7 +46,7 @@ def print_gallery_name(name, transform=term.p):
 
 def collect_users(galleries):
     """ Collect list of all users in all galleries.
-    """
+    # coding: utf-8"""
     u = set()
     for gallery in galleries:
         access = gallery.access
@@ -209,23 +213,19 @@ def access_manage_adduser(gallery, username):
     term.banner("DONE", type='INFO')
 
 def access_manage(args):
-    gallery = search_gallery(args.fspath, args.gallery_name, load_access=True)
-    if gallery:
-        if args.access_command == 'init':
-            access_manage_init(gallery, args.htpasswd)
-        else:
-            if gallery.access:
-                if args.access_command == 'list':
-                    access_manage_list(gallery)
-                elif args.access_command == 'adduser':
-                    for username in args.username:
-                        access_manage_adduser(gallery, username)
-            else:
-                term.banner("NO ACCESS INFORMATION FOR GALLERY '{0}'".format(gallery),
-                    type="ERROR")
+    gallery = get_gallery(args.fspath, args.gallery_name, load_access=True)
+    if args.access_command == 'init':
+        access_manage_init(gallery, args.htpasswd)
     else:
-        term.banner("GALLERY {0} NOT FOUND AT {1}".format(args.gallery_name, args.fspath),
-            type='ERROR')
+        if gallery.access:
+            if args.access_command == 'list':
+                access_manage_list(gallery)
+            elif args.access_command == 'adduser':
+                for username in args.username:
+                    access_manage_adduser(gallery, username)
+        else:
+            term.banner("NO ACCESS INFORMATION FOR GALLERY '{0}'".format(gallery),
+                type="ERROR")
 
 DESCRIPTION = """
 This script handles content and access rights for web galleries.
@@ -264,7 +264,7 @@ def main(args=None):
 
     # list command
     parser_list = subparsers.add_parser('list',
-        help="List all galleries.")
+        help="List all web galleries.")
     parser_list.set_defaults(function=galleries_list)
 
     # access command
@@ -304,7 +304,7 @@ def main(args=None):
 
     # index command
     parser_index = subparsers.add_parser('index',
-        help="Manage indexes for web galleries.")
+        help="Manage indexes of web galleries.")
     subparsers_index = parser_index.add_subparsers(
         title='index commands', dest='index command')
     subparsers_index.required = True
@@ -323,9 +323,28 @@ def main(args=None):
         help="Path to htpasswd file for access control")
     parser_index_install.set_defaults(function=index_install)
 
+    # album command
+    parser_album = subparsers.add_parser('album',
+        help="Manage albums of web gallery.")
+    subparsers_album = parser_album.add_subparsers(
+        title='album commands', dest='album command')
+    subparsers_album.required = True
+    # album setcover command
+    parser_album_setcover = subparsers_album.add_parser('setcover',
+        help="Set cover for album of web gallery.")
+    parser_album_setcover.set_defaults(function=album_setcover)
+    parser_album_setcover.add_argument('image_name',
+        help="Name of image to be used as cover (must exist inside gallery).")
+    parser_album_setcover.add_argument('album_name',
+        help="Name of album inside web gallery.")
+    parser_album_setcover.add_argument('gallery_name',
+        help="Name of web gallery to manage.")
+
     try:
         arguments = parser.parse_args() if args == None else parser.parse_args(args)
         arguments.function(arguments)
+    except GSError as x:
+        term.banner(str(x), type='ERROR')
     except FileNotFoundError as x:
         term.banner("NOT FOUND '{0}'".format(x), type='ERROR')
 

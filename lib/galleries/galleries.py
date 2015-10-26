@@ -45,6 +45,12 @@ class Gallery:
                 c.append(_(country.name))
         return ' '.join(c)
 
+    def get_album(self, label):
+        for album in self.albums:
+            if label == album.label:
+                return album
+        return None
+
     def access_init(self, authname, authuserfile):
         self.access = Access(authname=authname, authuserfile=authuserfile)
 
