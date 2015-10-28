@@ -2,9 +2,9 @@
 
 import sys, os, re, shutil, term
 
-from galleries_script_common import get_gallery, get_album_in_gallery
+from galleries_script import get_gallery, get_album_in_gallery
 
-def album_setcover(args):
+def setcover(args):
     gallery = get_gallery(args.fspath, args.gallery_name)
     album = get_album_in_gallery(gallery, args.album_name)
 
