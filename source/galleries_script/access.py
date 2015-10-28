@@ -8,10 +8,10 @@ from galleries.galleries import search_galleries
 
 SYMBOL_CHECKED = '✔'
 
-def show(args):
+def show(fspath, **args):
     term.banner("ACCESS TO WEB GALLERIES")
 
-    galleries = search_galleries(args.fspath, load_access=True)
+    galleries = search_galleries(fspath, load_access=True)
 
     # create list of all usernames in all galleries
     users = collect_users(galleries)
@@ -84,16 +84,16 @@ def manage_adduser(gallery, username):
     gallery.access_write()
     term.banner("DONE", type='INFO')
 
-def manage(args):
-    gallery = get_gallery(args.fspath, args.gallery_name, load_access=True)
-    if args.access_command == 'init':
-        manage_init(gallery, args.htpasswd)
+def manage(gallery_name, fspath, access_command, username=None, htpasswd=None, **args):
+    gallery = get_gallery(fspath, gallery_name, load_access=True)
+    if access_command == 'init':
+        manage_init(gallery, htpasswd)
     else:
         if gallery.access:
-            if args.access_command == 'list':
+            if access_command == 'list':
                 manage_list(gallery)
-            elif args.access_command == 'adduser':
-                for username in args.username:
+            elif access_command == 'adduser':
+                for username in username:
                     manage_adduser(gallery, username)
         else:
             term.banner("NO ACCESS INFORMATION FOR GALLERY '{0}'".format(gallery),

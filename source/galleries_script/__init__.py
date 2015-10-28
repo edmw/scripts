@@ -16,6 +16,19 @@ class GSError(Exception):
     def __str__(self):
         return "{0}".format(self.value)
 
+class GSAbortError(GSError):
+    def __str__(self):
+        return "ABORTED: {0}".format(self.value)
+
+def load_gallery(path, load_access=False):
+    if os.path.exists(path) and os.path.isdir(path):
+        fspath, gallery_name = os.path.split(os.path.normpath(path))
+        gallery = search_gallery(fspath, gallery_name, load_access=load_access)
+        if not gallery:
+            raise GSError("GALLERY '{0}' NOT FOUND AT '{1}'".format(gallery_name, fspath))
+        return gallery
+    raise GSError("NO GALLERY FOUND AT '{0}'".format(path))
+
 def get_gallery(fspath, gallery_name, load_access=False):
     gallery = search_gallery(fspath, gallery_name, load_access=load_access)
     if not gallery:

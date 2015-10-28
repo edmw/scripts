@@ -35,11 +35,16 @@ def negative(text):
 
 def message(message):
     print(BG.RESET + FG.RESET + message)
-    print
+    print()
+
+def ask(message):
+    value = input("{0} [Y/N] ".format(BG.RESET + FG.RESET + message))
+    print()
+    return value and value.lower() == 'y'
 
 def in_password(prompt):
     password = getpass.getpass(prompt)
-    print
+    print()
     return password
 
 class Progress():

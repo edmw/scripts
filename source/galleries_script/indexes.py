@@ -29,32 +29,32 @@ def create_write(fspath, galleries, path='./', title='Index'):
         })
         f.write(html)
 
-def create(args):
+def create(users, fspath, wspath, **args):
     term.banner("CREATE INDEXES")
 
     progress = term.Progress(0, title='Searching:')
-    galleries = search_galleries(args.fspath,
+    galleries = search_galleries(fspath,
         load_access=True, load_albums=True, progress=progress.progress
     )
     progress.finish()
 
-    create_write(args.fspath, galleries, path=args.wspath)
+    create_write(fspath, galleries, path=wspath)
 
-    if args.users:
+    if users:
         users = collect_users(galleries)
         for user in users:
-            user_path = os.path.join(args.fspath, "~{0}".format(safe(user.name)))
+            user_path = os.path.join(fspath, "~{0}".format(safe(user.name)))
             if not os.path.exists(user_path):
                 os.mkdir(user_path)
             if os.path.isdir(user_path):
                 user_galleries = collect_galleries_for_user(galleries, user)
                 create_write(user_path, user_galleries,
-                    path=args.wspath, title=user.name)
+                    path=wspath, title=user.name)
             else:
                 raise IOError("CREATE INDEXES: could not write index for user '{0}'".format(str(user)))
     term.banner("DONE", type='INFO')
 
-def install(args):
+def install(wspath, fspath, htpasswd, **args):
     """ Install indexes: Create htaccess file with rewrite rules to
         serve user-specific indexes.
 
@@ -64,15 +64,15 @@ def install(args):
     """
     term.banner("INSTALL INDEXES")
 
-    galleries = search_galleries(args.fspath, load_access=True)
+    galleries = search_galleries(fspath, load_access=True)
 
     users = collect_users(galleries)
-    access = Access(authname=TITLE, authuserfile=args.htpasswd)
+    access = Access(authname=TITLE, authuserfile=htpasswd)
     access.users.extend(users)
     access.conf.append(('RewriteEngine', 'On'))
-    access.conf.append(('RewriteBase', args.wspath))
+    access.conf.append(('RewriteBase', wspath))
     access.conf.append(('RewriteCond', '%{REMOTE_user} ^.+$'))
-    access.conf.append(('RewriteRule', "^$ {0}~%{{REMOTE_user}} [R,L]".format(args.wspath)))
-    access.write(args.fspath)
+    access.conf.append(('RewriteRule', "^$ {0}~%{{REMOTE_user}} [R,L]".format(wspath)))
+    access.write(fspath)
     term.banner("DONE", type='INFO')
 
