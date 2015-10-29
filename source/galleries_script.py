@@ -122,6 +122,10 @@ def galleries_install(gallery_path, fspath, htpasswd=None, interactive=False, **
         if htpasswd:
             access.manage(gallery_name=gallery.name, fspath=fspath, htpasswd=htpasswd,
                 access_command='init')
+        if args['set_albums_cover']:
+            for a in gallery.albums:
+                album.setcover(gallery_name=gallery.name, album_name=a.label,
+                    image_name=args['set_albums_cover'], fspath=fspath)
 
 DESCRIPTION = """
 This script handles content and access rights for web galleries.
@@ -175,6 +179,8 @@ def main(args=None):
     parser_install.set_defaults(function=galleries_install)
     parser_install.add_argument('--htpasswd', default=config_htpasswd,
         help="Path to htpasswd file for access control.")
+    parser_install.add_argument('--set-albums-cover', metavar='image_name',
+        help="Set cover for albums of web gallery.")
     parser_install.add_argument('gallery_path',
         help="Path to web gallery to install.")
 
