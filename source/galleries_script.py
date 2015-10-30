@@ -9,8 +9,9 @@
 # pip install pytidylib
 # pip install pycountry
 # pip install colorama
+# pip install humanfriendly
 
-import sys, os, re, term, uuid, shutil
+import sys, os, re, term, uuid, shutil, humanfriendly
 
 from galleries_script import *
 from galleries_script import optimize
@@ -29,19 +30,35 @@ def safe(value):
     value = re.sub('[^\w\s-]', '', value, flags=re.U).strip().lower()
     return value
 
-def galleries_list(fspath, **args):
+def get_dir_size(path):
+    size = 0
+    for root, directories, files in os.walk(path):
+        size = size + sum(os.path.getsize(os.path.join(root, name)) for name in files)
+    return size
+
+def galleries_list(fspath, stat=False, **args):
     term.banner("LIST OF GALLERIES")
+
+    compact = not stat
 
     galleries = search_galleries(fspath)
 
-    print_gallery_name('Name', term.em)
-    print(term.em("{1}{0}".format('Albums', SYMBOL_SEPARATOR_CLEAR)))
+    if compact:
+        print_gallery_name('Name', term.em)
+        print(term.em("{1}{0}".format('Albums', SYMBOL_SEPARATOR_CLEAR)))
     for gallery in galleries:
-        print_gallery_name(gallery.name)
-        print(term.p("{1}{0}".format(
-            ', '.join(str(x) for x in gallery.albums),
-            SYMBOL_SEPARATOR
-        )))
+        if compact:
+            print_gallery_name(gallery.name)
+            print(term.p("{1}{0}".format(
+                ', '.join(str(x) for x in gallery.albums),
+                SYMBOL_SEPARATOR
+            )))
+        else:
+            print_gallery_name(gallery.name, term.em, end='\n')
+            print(term.p("{0:>20}: {1}".format('Albums', ', '.join(str(x) for x in gallery.albums))))
+            dir_size = get_dir_size(gallery.path)
+            print(term.p("{0:>20}: {1}".format("Size on disk", humanfriendly.format_size(dir_size))))
+            print()
 
 class GalleryInstaller:
     def __init__(self, fspath, interactive=False):
@@ -176,6 +193,8 @@ def main(args=None):
     parser_list = subparsers.add_parser('list',
         help="List all web galleries.")
     parser_list.set_defaults(function=galleries_list)
+    parser_list.add_argument('--stat', action='store_true', default=False,
+        help="Print statistics for web galleries.")
 
     # install command
     parser_install = subparsers.add_parser('install', parents=[parser_interactive],

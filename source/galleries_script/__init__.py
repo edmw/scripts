@@ -60,11 +60,11 @@ def collect_galleries_for_user(galleries, user):
             g.append(gallery)
     return g
 
-def print_gallery_name(name, transform=term.p):
+def print_gallery_name(name, transform=term.p, end=''):
     if len(name) > NAME_LENGTH:
         name = "{0}...".format(name[0:NAME_LENGTH - 3])
     else:
         name = name + ' ' * (NAME_LENGTH - len(name))
     name = name if not transform else transform(name)
-    print("{0}".format(name), end='')
+    print("{0}".format(name), end=end)
 
