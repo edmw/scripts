@@ -13,6 +13,7 @@
 import sys, os, re, term, uuid, shutil
 
 from galleries_script import *
+from galleries_script import optimize
 from galleries_script import access
 from galleries_script import indexes
 from galleries_script import album
@@ -167,6 +168,9 @@ def main(args=None):
     parser_interactive = argparse.ArgumentParser(add_help=False)
     parser_interactive.add_argument('-i', '--interactive', action='store_true', default=False,
         help="enable interactive mode and ask for input")
+    parser_dryrun = argparse.ArgumentParser(add_help=False)
+    parser_dryrun.add_argument('-n', '--dry-run', action='store_true', default=False,
+        help="simulate actions only and print expected results")
 
     # list command
     parser_list = subparsers.add_parser('list',
@@ -183,6 +187,19 @@ def main(args=None):
         help="Set cover for albums of web gallery.")
     parser_install.add_argument('gallery_path',
         help="Path to web gallery to install.")
+
+    # optimize command
+    parser_optimize = subparsers.add_parser('optimize',
+        help="Optimize web gallery.")
+    subparsers_optimize = parser_optimize.add_subparsers(
+        title='optimize commands', dest='optimize_command')
+    subparsers_optimize.required = True
+    # optimize images command
+    parser_optimize_images = subparsers_optimize.add_parser('images', parents=[parser_dryrun],
+        help="Optimize images of web gallery.")
+    parser_optimize_images.set_defaults(function=optimize.images)
+    parser_optimize_images.add_argument('gallery_name',
+        help="Name of web gallery to manage.")
 
     # access command
     parser_access = subparsers.add_parser('access',
