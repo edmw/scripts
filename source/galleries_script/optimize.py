@@ -55,10 +55,17 @@ def images(gallery_name, fspath, **args):
                                 new_size = new_size + len(chunk)
 
                     ratio = 100 / size * new_size
-                    print(term.p("{0:32} {1:.2f}% {2:8} {3:8}".format(filename, ratio, size, new_size)))
+                    print(term.p("{0:32} {1:6.2f}% {2:8} {3:8}".format(filename, ratio, size, new_size)), end='  ')
 
                     if new_path:
-                        shutil.move(new_path, path)
+                        if ratio < 95:
+                            print("... gained {0:.2f}%".format(100 - ratio), end='  ')
+                            shutil.move(new_path, path)
+                        else:
+                            print("... skipping", end='  ')
+                            os.remove(new_path)
+
+                    print()
 
     term.banner("DONE", type='INFO')
 
