@@ -30,11 +30,17 @@ def safe(value):
     value = re.sub('[^\w\s-]', '', value, flags=re.U).strip().lower()
     return value
 
-def get_dir_size(path):
-    size = 0
+def gallery_stat(path):
+    number_of_pictures = 0
+    number_of_thumbnail_pictures = 0
+    size_on_disk = 0
     for root, directories, files in os.walk(path):
-        size = size + sum(os.path.getsize(os.path.join(root, name)) for name in files)
-    return size
+        if root.endswith('/p'):
+            number_of_pictures = len(files)
+        if root.endswith('/t'):
+            number_of_thumbnail_pictures = len(files)
+        size_on_disk = size_on_disk + sum(os.path.getsize(os.path.join(root, name)) for name in files)
+    return number_of_pictures, number_of_thumbnail_pictures, size_on_disk
 
 def galleries_list(fspath, stat=False, **args):
     term.banner("LIST OF GALLERIES")
@@ -56,8 +62,9 @@ def galleries_list(fspath, stat=False, **args):
         else:
             print_gallery_name(gallery.name, term.em, end='\n')
             print(term.p("{0:>20}: {1}".format('Albums', ', '.join(str(x) for x in gallery.albums))))
-            dir_size = get_dir_size(gallery.path)
-            print(term.p("{0:>20}: {1}".format("Size on disk", humanfriendly.format_size(dir_size))))
+            nop, notp, sod = gallery_stat(gallery.path)
+            print(term.p("{0:>20}: {1!s}".format("Number of pictures", nop)))
+            print(term.p("{0:>20}: {1}".format("Size on disk", humanfriendly.format_size(sod))))
             print()
 
 class GalleryInstaller:
