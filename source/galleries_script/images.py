@@ -4,7 +4,7 @@ import sys, os, re, fnmatch, shutil, subprocess, term
 
 from galleries_script import *
 
-def images(gallery_name, fspath, **args):
+def optimize(gallery_name, fspath, **args):
     gallery = get_gallery(fspath, gallery_name)
 
     term.banner("OPTIMIZE IMAGES (JPEG)")

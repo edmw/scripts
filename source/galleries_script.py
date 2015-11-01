@@ -14,10 +14,10 @@
 import sys, os, re, term, uuid, shutil, humanfriendly
 
 from galleries_script import *
-from galleries_script import optimize
 from galleries_script import access
 from galleries_script import indexes
-from galleries_script import album
+from galleries_script import albums
+from galleries_script import images
 
 from galleries.galleries import search_galleries
 from galleries.access import ACCESS_FILE_NAME
@@ -214,19 +214,6 @@ def main(args=None):
     parser_install.add_argument('gallery_path',
         help="Path to web gallery to install.")
 
-    # optimize command
-    parser_optimize = subparsers.add_parser('optimize',
-        help="Optimize web gallery.")
-    subparsers_optimize = parser_optimize.add_subparsers(
-        title='optimize commands', dest='optimize_command')
-    subparsers_optimize.required = True
-    # optimize images command
-    parser_optimize_images = subparsers_optimize.add_parser('images', parents=[parser_dryrun],
-        help="Optimize images of web gallery.")
-    parser_optimize_images.set_defaults(function=optimize.images)
-    parser_optimize_images.add_argument('gallery_name',
-        help="Name of web gallery to manage.")
-
     # access command
     parser_access = subparsers.add_parser('access',
         help="Manage access to web gallery.")
@@ -290,21 +277,34 @@ def main(args=None):
         help="Path to htpasswd file for access control.")
     parser_indexes_install.set_defaults(function=indexes.install)
 
-    # album command
-    parser_album = subparsers.add_parser('album',
-        help="Manage album of web gallery.")
-    subparsers_album = parser_album.add_subparsers(
-        title='album commands', dest='album command')
-    subparsers_album.required = True
-    # album setcover command
-    parser_album_setcover = subparsers_album.add_parser('setcover',
+    # albums command
+    parser_albums = subparsers.add_parser('albums',
+        help="Manage albums of web gallery.")
+    subparsers_albums = parser_albums.add_subparsers(
+        title='albums commands', dest='albums command')
+    subparsers_albums.required = True
+    # albums setcover command
+    parser_albums_setcover = subparsers_albums.add_parser('setcover',
         help="Set cover for album of web gallery.")
-    parser_album_setcover.set_defaults(function=album.setcover)
-    parser_album_setcover.add_argument('image_name',
+    parser_albums_setcover.set_defaults(function=albums.setcover)
+    parser_albums_setcover.add_argument('image_name',
         help="Name of image to be used as cover (must exist inside gallery).")
-    parser_album_setcover.add_argument('album_name',
+    parser_albums_setcover.add_argument('album_name',
         help="Name of album inside web gallery.")
-    parser_album_setcover.add_argument('gallery_name',
+    parser_albums_setcover.add_argument('gallery_name',
+        help="Name of web gallery to manage.")
+
+    # images command
+    parser_images = subparsers.add_parser('images',
+        help="Manage images of web gallery.")
+    subparsers_images = parser_images.add_subparsers(
+        title='images commands', dest='images_command')
+    subparsers_images.required = True
+    # images optimize command
+    parser_images_optimize = subparsers_images.add_parser('optimize', parents=[parser_dryrun],
+        help="Optimize images of web gallery.")
+    parser_images_optimize.set_defaults(function=images.optimize)
+    parser_images_optimize.add_argument('gallery_name',
         help="Name of web gallery to manage.")
 
     try:
