@@ -64,6 +64,9 @@ class Access:
         if not user in self.users:
             self.users.append(user)
 
+    def remove_user(self, name):
+        self.users = [user for user in self.users if not user.name == name]
+
     def get_password(self, user):
         """ Get password (encrypted) for the given user.
 

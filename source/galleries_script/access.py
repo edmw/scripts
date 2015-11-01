@@ -84,6 +84,12 @@ def manage_adduser(gallery, username):
     gallery.access_write()
     term.banner("DONE", type='INFO')
 
+def manage_removeuser(gallery, username):
+    term.banner("REMOVE ACCESS FOR USER '{1}' TO GALLERY '{0}'".format(gallery, username))
+    gallery.access.remove_user(username)
+    gallery.access_write()
+    term.banner("DONE", type='INFO')
+
 def manage(gallery_name, fspath, access_command, username=None, htpasswd=None, **args):
     gallery = get_gallery(fspath, gallery_name, load_access=True)
     if access_command == 'init':
@@ -95,6 +101,10 @@ def manage(gallery_name, fspath, access_command, username=None, htpasswd=None, *
             elif access_command == 'adduser':
                 for username in username:
                     manage_adduser(gallery, username)
+            elif access_command == 'removeuser':
+                for username in username:
+                    manage_removeuser(gallery, username)
+
         else:
             term.banner("NO ACCESS INFORMATION FOR GALLERY '{0}'".format(gallery),
                 type="ERROR")

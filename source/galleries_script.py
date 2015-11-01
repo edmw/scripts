@@ -260,6 +260,14 @@ def main(args=None):
         help="Name of user to grant access to web gallery.")
     parser_access_adduser.add_argument('gallery_name',
         help="Name of web gallery to manage.")
+    # access deluser command
+    parser_access_removeuser = subparsers_access.add_parser('removeuser',
+        help="Remove access for user to web gallery.")
+    parser_access_removeuser.set_defaults(function=access.manage)
+    parser_access_removeuser.add_argument('username', nargs='+',
+        help="Name of user to revoke access to web gallery.")
+    parser_access_removeuser.add_argument('gallery_name',
+        help="Name of web gallery to manage.")
 
     # indexes command
     parser_indexes = subparsers.add_parser('indexes',
