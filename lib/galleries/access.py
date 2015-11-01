@@ -64,6 +64,9 @@ class Access:
         if not user in self.users:
             self.users.append(user)
 
+    def has_user(self, name):
+        return any(user for user in self.users if user.name == name)
+
     def remove_user(self, name):
         self.users = [user for user in self.users if not user.name == name]
 

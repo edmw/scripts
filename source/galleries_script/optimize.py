@@ -2,8 +2,7 @@
 
 import sys, os, re, fnmatch, shutil, subprocess, term
 
-from galleries_script import get_gallery
-from galleries_script import GSError
+from galleries_script import *
 
 def images(gallery_name, fspath, **args):
     gallery = get_gallery(fspath, gallery_name)

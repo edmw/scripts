@@ -86,9 +86,12 @@ def manage_adduser(gallery, username):
 
 def manage_removeuser(gallery, username):
     term.banner("REMOVE ACCESS FOR USER '{1}' TO GALLERY '{0}'".format(gallery, username))
-    gallery.access.remove_user(username)
-    gallery.access_write()
-    term.banner("DONE", type='INFO')
+    if gallery.access.has_user(username):
+        gallery.access.remove_user(username)
+        gallery.access_write()
+        term.banner("DONE", type='INFO')
+    else:
+        raise GSError("ACCESS: USER '{0}' NOT FOUND IN GALLERY '{1}'".format(username, gallery.name))
 
 def manage(gallery_name, fspath, access_command, username=None, htpasswd=None, **args):
     gallery = get_gallery(fspath, gallery_name, load_access=True)

@@ -32,7 +32,7 @@ class Gallery:
             "".join([self.year, self.month, self.day]),
             "".join(self.countries),
             self.label
-        ])
+        ]).strip()
 
     def date_str(self):
         return "{0}.{1}.{2}".format(self.day, self.month, self.year)
