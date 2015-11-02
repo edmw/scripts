@@ -37,13 +37,19 @@ class Gallery:
     def date_str(self):
         return "{0}.{1}.{2}".format(self.day, self.month, self.year)
 
-    def countries_str(self):
+    def countries(self, sep=''):
+        return sep.join(self.countries)
+
+    def countries_str(self, format='long', sep=' '):
         c = []
-        for alpha2 in self.countries:
-            country = pycountry.countries.get(alpha2=alpha2)
-            if country:
-                c.append(_(country.name))
-        return ' '.join(c)
+        if format == 'long':
+            for alpha2 in self.countries:
+                country = pycountry.countries.get(alpha2=alpha2)
+                if country:
+                    c.append(_(country.name))
+        elif format == 'short':
+            c = self.countries
+        return sep.join(c)
 
     def get_album(self, label):
         for album in self.albums:

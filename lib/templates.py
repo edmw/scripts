@@ -6,6 +6,8 @@ from wheezy.html.utils import escape_html
 from bs4 import BeautifulSoup
 from tidylib import tidy_document
 
+from json import dumps as encode_json
+
 class TemplateEngine:
     def __init__(self, template_path):
         self.template_path = template_path
@@ -15,6 +17,7 @@ class TemplateEngine:
             extensions=[wheezy.ext.core.CoreExtension()]
         )
         self.template_engine.global_vars.update({'e': escape_html})
+        self.template_engine.global_vars.update({'j': encode_json})
 
         self.templates = {}
 

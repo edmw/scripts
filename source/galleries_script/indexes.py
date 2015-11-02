@@ -2,6 +2,8 @@
 
 import sys, os, re, term
 
+from collections import Counter
+
 from galleries_script import *
 
 from galleries.galleries import search_galleries
@@ -20,12 +22,18 @@ def safe(value):
     return value
 
 def create_write(fspath, galleries, path='./', title='Index'):
+    # count countries
+    world_countries = Counter()
+    for gallery in galleries:
+        world_countries.update(gallery.countries)
+
     filename = os.path.join(fspath, 'index.html')
     with open(filename, 'wb') as f:
         html = template_engine.render('galleries_index.html', {
             'path': path,
             'title': title,
-            'galleries': galleries
+            'galleries': galleries,
+            'world_countries': world_countries,
         })
         f.write(html)
 
