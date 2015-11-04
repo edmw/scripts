@@ -51,6 +51,9 @@ class Gallery:
             c = self.countries
         return sep.join(c)
 
+    def albums_str(self, sep=', '):
+        return sep.join(["'{0!s}'".format(a) for a in self.albums])
+
     def get_album(self, label):
         for album in self.albums:
             if label == album.label:
@@ -95,7 +98,7 @@ class Gallery:
             try:
                 g['access'] = read_access(path)
             except ValueError as x:
-                logging.warning("{0}".format(x))
+                logging.warning("%s", x)
 
         return Gallery(path, name, **g)
       
@@ -120,11 +123,15 @@ def search_galleries(path, load_access=False, load_albums=False, progress=None):
     non = len(names)
     ion = 0
     for name in reversed(sorted(names)):
+        logging.info("found directory '%s'", name)
         gallery = Gallery.factory(path, name,
             load_access=load_access, load_albums=load_albums
         )
         if gallery:
+            logging.info("found gallery '%s' with albums [%s]", gallery, gallery.albums_str())
             galleries.append(gallery)
+        else:
+            logging.info("no gallery at '%s'", name)
         if progress:
             progress(ion, non)
         ion = ion + 1

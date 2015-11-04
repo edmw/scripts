@@ -1,6 +1,6 @@
 # coding: utf-8
 
-import sys, os, re, term
+import sys, os, re, term, logging
 
 from collections import Counter
 
@@ -22,6 +22,8 @@ def safe(value):
     return value
 
 def create_write(fspath, galleries, path='./', title='Index'):
+    logging.info("write index at '%s'", fspath)
+
     # count countries
     world_countries = Counter()
     for gallery in galleries:
@@ -38,9 +40,11 @@ def create_write(fspath, galleries, path='./', title='Index'):
         f.write(html)
 
 def create(users, fspath, wspath, **args):
+    verbose = args.get('verbose', False)
+
     term.banner("CREATE INDEXES")
 
-    progress = term.Progress(0, title='Searching:')
+    progress = term.Progress(0, title='Searching:', bar=(verbose is False))
     galleries = search_galleries(fspath,
         load_access=True, load_albums=True, progress=progress.progress
     )

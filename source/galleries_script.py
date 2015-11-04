@@ -11,7 +11,7 @@
 # pip install colorama
 # pip install humanfriendly
 
-import sys, os, re, term, uuid, shutil, humanfriendly
+import sys, os, re, term, logging, uuid, shutil, humanfriendly
 
 from galleries_script import *
 from galleries_script import access
@@ -192,6 +192,9 @@ def main(args=None):
     parser_interactive = argparse.ArgumentParser(add_help=False)
     parser_interactive.add_argument('-i', '--interactive', action='store_true', default=False,
         help="enable interactive mode and ask for input")
+    parser_verbose = argparse.ArgumentParser(add_help=False)
+    parser_verbose.add_argument('-v', '--verbose', action='store_true', default=False,
+        help="enable verbose output")
     parser_dryrun = argparse.ArgumentParser(add_help=False)
     parser_dryrun.add_argument('-n', '--dry-run', action='store_true', default=False,
         help="simulate actions only and print expected results")
@@ -263,7 +266,7 @@ def main(args=None):
         title='indexes commands', dest='indexes command')
     subparsers_indexes.required = True
     # indexes create command
-    parser_indexes_create = subparsers_indexes.add_parser('create',
+    parser_indexes_create = subparsers_indexes.add_parser('create', parents=[parser_verbose],
         help="Create indexes for web galleries.")
     parser_indexes_create.add_argument('--users', action='store_true', default=False,
         help="Create indexes for users.")
@@ -309,6 +312,12 @@ def main(args=None):
 
     try:
         arguments = parser.parse_args() if args == None else parser.parse_args(args)
+        if 'verbose' in arguments and arguments.verbose == True:
+            logging_level = logging.INFO
+        else:
+            logging_level = logging.WARNING
+        logging.basicConfig(level=logging_level,
+            format='[%(levelname)s][%(funcName)s] %(message)s')
         arguments.function(**vars(arguments))
     except GSError as x:
         term.banner(str(x), type='ERROR')

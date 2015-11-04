@@ -48,35 +48,40 @@ def in_password(prompt):
     return password
 
 class Progress():
-    def __init__(self, total, size = 72, title='Progress:'):
+    def __init__(self, total, size=72, title='Progress:', bar=True):
         self.total = total
         self.size = size
         self.hashes = None
         self.title = title
+        self.bar = bar
     def progress(self, index, total = None):
         if not total:
             total = self.total
+
         percent = 1
         if total > 0:
             percent = float(index) / total
-        hashes = '#' * int(round(percent * self.size))
-        if self.hashes == None or self.hashes != hashes:
-            self.hashes = hashes
-            spaces = ' ' * (self.size - len(hashes))
-            sys.stdout.write(
-                "\r{2} [{0}] {1}%".format(
-                    hashes + spaces,
-                    int(round(percent * 100)),
-                    self.title
+
+        if self.bar:
+            hashes = '#' * int(round(percent * self.size))
+            if self.hashes == None or self.hashes != hashes:
+                self.hashes = hashes
+                spaces = ' ' * (self.size - len(hashes))
+                sys.stdout.write(
+                    "\r{2} [{0}] {1:3.0f}%".format(hashes + spaces, 100 * percent, self.title)
                 )
-            )
-            sys.stdout.flush()
+                sys.stdout.flush()
+        else:
+            print(p("{0} {1:3.2f}%".format(self.title, 100 * percent)))
+            
     def finish(self, total = None):
         if not total:
             total = self.total
             self.progress(total)
-        sys.stdout.write("\n\n")
-        sys.stdout.flush()
+
+        if self.bar:
+            sys.stdout.write("\n\n")
+            sys.stdout.flush()
 
 colorama_init();
 
