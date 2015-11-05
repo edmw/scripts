@@ -44,7 +44,7 @@ class Album:
       
     factory = staticmethod(factory)
 
-ALBUM_NAME_PATTERN = re.compile('^([p][234])\.html$')
+ALBUM_NAME_PATTERN = re.compile('^(index|[p][234])\.html$')
 
 def search_albums(path, load=False):
     """ Search albums at the given path.
