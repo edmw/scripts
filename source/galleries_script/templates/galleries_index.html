@@ -48,11 +48,11 @@
     <div class="label">
         <span class="date">@{gallery.date_str()!!e}</span>
         @if gallery.label:
-            <div class="title">@gallery.label!e</div>
+            <div class="title">@gallery.label!h!e</div>
         @else:
             <div class="title">@{gallery.countries_str()!!e}</div>
         @end
-        <div class="description">@gallery.albums[0].description!e</div>
+        <div class="description">@gallery.albums[0].description!h!e</div>
         @for album in gallery.albums:
             <div>
                 @if album.label == 'p4':

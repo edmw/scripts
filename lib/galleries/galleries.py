@@ -35,7 +35,10 @@ class Gallery:
         ]).strip()
 
     def date_str(self):
-        return "{0}.{1}.{2}".format(self.day, self.month, self.year)
+        if self.day == "00":
+            return "{0}/{1}".format(self.month, self.year)
+        else:
+            return "{0}.{1}.{2}".format(self.day, self.month, self.year)
 
     def countries(self, sep=''):
         return sep.join(self.countries)
