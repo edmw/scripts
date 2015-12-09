@@ -39,7 +39,7 @@ def create_write(fspath, galleries, path='./', title='Index'):
         })
         f.write(html)
 
-def create(users, fspath, wspath, **args):
+def create(users, fspath, wspath, htpasswd, **args):
     verbose = args.get('verbose', False)
 
     term.banner("CREATE INDEXES")
@@ -50,6 +50,7 @@ def create(users, fspath, wspath, **args):
     )
     progress.finish()
 
+    # create default index file
     create_write(fspath, galleries, path=wspath)
 
     if users:
@@ -60,8 +61,15 @@ def create(users, fspath, wspath, **args):
                 os.mkdir(user_path)
             if os.path.isdir(user_path):
                 user_galleries = collect_galleries_for_user(galleries, user)
+                # create user index file
                 create_write(user_path, user_galleries,
                     path=wspath, title=user.name)
+                # create htaccess file for user directory
+                access = Access(authname=TITLE, authuserfile=htpasswd)
+                access.users.extend([user])
+                print(user_path)
+                print(access)
+                access.write(user_path)
             else:
                 raise IOError("CREATE INDEXES: could not write index for user '{0}'".format(str(user)))
     term.banner("DONE", type='INFO')

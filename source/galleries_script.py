@@ -270,6 +270,8 @@ def main(args=None):
         help="Create indexes for web galleries.")
     parser_indexes_create.add_argument('--users', action='store_true', default=False,
         help="Create indexes for users.")
+    parser_indexes_create.add_argument('--htpasswd', default=config_htpasswd,
+        help="Path to htpasswd file for access control.")
     parser_indexes_create.set_defaults(function=indexes.create)
     # indexes install command
     config_htpasswd = config['Access'].get('htpasswd') if 'Access' in config else None
