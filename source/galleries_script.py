@@ -11,7 +11,7 @@
 # pip install colorama
 # pip install humanfriendly
 
-import sys, os, re, term, logging, uuid, shutil, humanfriendly
+import sys, os, re, term, logging, uuid, shutil, fnmatch, humanfriendly
 
 from galleries_script import *
 from galleries_script import access
@@ -152,6 +152,13 @@ def galleries_install(gallery_path, fspath, htpasswd=None, interactive=False, **
                 album.setcover(gallery_name=gallery.name, album_name=a.label,
                     image_name=args['set_albums_cover'], fspath=fspath)
 
+def access_manage(galleries_name_pattern, fspath, **args):
+    galleries = search_galleries(fspath)
+
+    for gallery in galleries:
+        if fnmatch.fnmatch(gallery.name, galleries_name_pattern):
+            access.manage(gallery_name=gallery.name, fspath=fspath, **args)
+
 DESCRIPTION = """
 This script handles content and access rights for web galleries.
 """
@@ -245,19 +252,19 @@ def main(args=None):
     # access adduser command
     parser_access_adduser = subparsers_access.add_parser('adduser',
         help="Add access for user to web gallery.")
-    parser_access_adduser.set_defaults(function=access.manage)
+    parser_access_adduser.set_defaults(function=access_manage)
     parser_access_adduser.add_argument('username', nargs='+',
         help="Name of user to grant access to web gallery.")
-    parser_access_adduser.add_argument('gallery_name',
-        help="Name of web gallery to manage.")
+    parser_access_adduser.add_argument('galleries_name_pattern',
+        help="Pattern for names of web galleries to manage.")
     # access deluser command
     parser_access_removeuser = subparsers_access.add_parser('removeuser',
         help="Remove access for user to web gallery.")
-    parser_access_removeuser.set_defaults(function=access.manage)
+    parser_access_removeuser.set_defaults(function=access_manage)
     parser_access_removeuser.add_argument('username', nargs='+',
         help="Name of user to revoke access to web gallery.")
-    parser_access_removeuser.add_argument('gallery_name',
-        help="Name of web gallery to manage.")
+    parser_access_removeuser.add_argument('galleries_name_pattern',
+        help="Pattern for names of web galleries to manage.")
 
     # indexes command
     parser_indexes = subparsers.add_parser('indexes',

@@ -67,8 +67,6 @@ def create(users, fspath, wspath, htpasswd, **args):
                 # create htaccess file for user directory
                 access = Access(authname=TITLE, authuserfile=htpasswd)
                 access.users.extend([user])
-                print(user_path)
-                print(access)
                 access.write(user_path)
             else:
                 raise IOError("CREATE INDEXES: could not write index for user '{0}'".format(str(user)))
