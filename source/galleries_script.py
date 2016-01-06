@@ -50,10 +50,12 @@ def galleries_list(fspath, stat=False, **args):
     galleries = search_galleries(fspath)
 
     if compact:
+        print(term.em('#    '), end='')
         print_gallery_name('Name', term.em)
         print(term.em("{1}{0}".format('Albums', SYMBOL_SEPARATOR_CLEAR)))
-    for gallery in galleries:
+    for i, gallery in enumerate(galleries):
         if compact:
+            print(term.p("{:<5d}".format(i)), end='')
             print_gallery_name(gallery.name)
             print(term.p("{1}{0}".format(
                 ', '.join(str(x) for x in gallery.albums),
