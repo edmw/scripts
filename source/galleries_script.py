@@ -10,6 +10,7 @@
 # pip install pycountry
 # pip install colorama
 # pip install humanfriendly
+# pip install Pyphen
 
 import sys, os, re, term, logging, uuid, shutil, fnmatch, humanfriendly
 
@@ -151,7 +152,7 @@ def galleries_install(gallery_path, fspath, htpasswd=None, interactive=False, **
                 access_command='init')
         if args['set_albums_cover']:
             for a in gallery.albums:
-                album.setcover(gallery_name=gallery.name, album_name=a.label,
+                albums.setcover(gallery_name=gallery.name, album_name=a.label,
                     image_name=args['set_albums_cover'], fspath=fspath)
 
 def access_manage(galleries_name_pattern, fspath, **args):
@@ -222,7 +223,7 @@ def main(args=None):
     parser_install.add_argument('--htpasswd', default=config_htpasswd,
         help="Path to htpasswd file for access control.")
     parser_install.add_argument('--set-albums-cover', metavar='image_name',
-        help="Set cover for albums of web gallery.")
+        help="Set cover for albums of web gallery (without file name extension).")
     parser_install.add_argument('gallery_path',
         help="Path to web gallery to install.")
 
@@ -299,7 +300,7 @@ def main(args=None):
     subparsers_albums.required = True
     # albums setcover command
     parser_albums_setcover = subparsers_albums.add_parser('setcover',
-        help="Set cover for album of web gallery.")
+        help="Set cover for album of web gallery (without file name extension).")
     parser_albums_setcover.set_defaults(function=albums.setcover)
     parser_albums_setcover.add_argument('image_name',
         help="Name of image to be used as cover (must exist inside gallery).")
