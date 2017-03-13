@@ -167,10 +167,27 @@ This script handles content and access rights for web galleries.
 """
 
 EPILOG = """
+How to install and setup a new gallery:
 """
+EPILOG = EPILOG + humanfriendly.tables.format_pretty_table(
+    [
+        [ "1.", "galleries install <path_to_gallery_directory>" ],
+        [ "2.", "galleries list" ],
+        [ "3.", "galleries albums setcover <image_name_wo_extension> <album_name> <gallery_name>" ],
+        [ "4.", "galleries access show" ],
+        [ "5.", "galleries access adduser <user1> <user2> ... <gallery_name>" ],
+        [ "6.", "galleries images optimize <gallery_name>" ],
+    ],
+    [ "Step", "Command" ]
+)
 
 import argparse
 import configparser
+
+class ArgumentParser(argparse.ArgumentParser):
+
+    def print_help(self):
+        humanfriendly.terminal.usage(self.format_help())
 
 def path_argument(value):
     if not value.endswith('/'):
@@ -184,7 +201,7 @@ def main(args=None):
 
     config_htpasswd = config['Access'].get('htpasswd') if 'Access' in config else None
 
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
         prog=os.getenv('SCRIPT'),
         description=DESCRIPTION,
         epilog=EPILOG,
