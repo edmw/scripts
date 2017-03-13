@@ -1,0 +1,25 @@
+.Info_container{
+	margin: auto;
+	padding: 0px;
+}
+.Info{
+	display: none;
+	position: absolute;
+	top: 10px;
+	color: black;
+	background-color: white;
+	border: solid 1px black;
+	padding: 8px;
+	opacity:0.4;
+	text-align: left;
+}
+.Info_button{
+	width: 32px;
+	height: 32px;
+	border: none;
+}
+.Info_text{
+	text-align: left;
+	font-size: small;
+	font-family: verdana, arial, helvetica, sans-serif;
+}

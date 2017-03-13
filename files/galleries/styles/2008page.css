@@ -1,0 +1,127 @@
+html{
+	margin: 0px;
+	padding: 0px;
+}
+body{
+	overflow-y: scroll;
+	margin: 0px;
+	padding: 0px;
+	color: black;
+	background-color: white;
+	background-image: url("../images/background.png");
+	background-attachment: fixed;
+	font-size: 82%;
+	font-family: verdana, arial, helvetica, sans-serif;
+}
+div#navigation{
+	position: absolute;
+	z-index: 1;
+	width: 100%;
+	top: 0px;
+	left: 0px;
+	margin: 0px;
+	padding: 0px;
+	color: black;
+	background: transparent;
+}
+div#navigation div{
+	margin: 24px;
+	padding: 0px;
+	font-size: 2em;
+	font-weight: bold;
+	text-align: center;
+}
+#navigation-left{
+	position: absolute;
+	left: 0px;
+	top: 0px;
+}
+#navigation-right{
+	position: absolute;
+	right: 0px;
+	top: 0px;
+}
+div#navigation img{
+	border: none;
+}
+body>div#navigation{
+	position: fixed;
+}
+div#content{
+	position: absolute;
+	width:100%;
+	z-index: 0;
+	margin: 0px;
+	margin-top: 0px;
+	padding: 0px;
+}
+
+#image{
+	width: 100%;
+	height: 800px;
+}
+#image td{
+	text-align: center;
+	vertical-align: middle;
+}
+
+#head{
+	display: none;
+}
+
+#text{
+	display: none;
+}
+#text-extended{
+	display: none;
+	margin-top: 8px;
+}
+#text-show{
+	display: none;
+	margin-top: 8px;
+	cursor: pointer;
+}
+#text-hide{
+	display: none;
+	margin-top: 8px;
+	cursor: pointer;
+}
+
+#exif{
+	margin: 0px;
+	padding: 0px;
+	border-collapse: collapse;
+}
+#exif th{
+	margin: 0px;
+	padding: 0px;
+	padding-right: 1em;
+	font-size: x-small;
+	text-align: left;
+}
+#exif td{
+	margin: 0px;
+	padding: 0px;
+	padding-left: 1em;
+	font-size: x-small;
+	text-align: left;
+}
+
+.headline{
+	color: #666;
+	background-color: transparent;
+	font-size: x-small;
+}
+.caption{
+	color: black;
+	background-color: transparent;
+	font-weight: bold;
+}
+.description{
+	color: black;
+	background-color: transparent;
+	font-weight: normal;
+}
+.googlemaps{
+	font-size: x-small;
+}

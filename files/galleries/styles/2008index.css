@@ -1,0 +1,136 @@
+html{
+	margin: 0px;
+	padding: 0px;
+}
+body{
+	overflow-y: scroll;
+	margin: 0px;
+	padding: 0px;
+	color: black;
+	background-color: white;
+	font-size: 82%;
+	font-family: verdana, arial, helvetica, sans-serif;
+}
+div#banner{
+	position: absolute;
+	z-index: 1;
+	top: 0px;
+	left: 0px;
+	margin: 0px;
+	padding: 0px;
+	padding-top: 4px;
+	padding-bottom: 4px;
+	width: 100%;
+	height: 80px;
+	text-align: center;
+	color: #333;
+	background-color: #cd4700;
+	border-bottom: 8px solid black;
+}
+body>div#banner{
+	position: fixed;
+}
+div#header{
+	position: absolute;
+	z-index: 1;
+	top: 96px;
+	left: 0px;
+	margin: 0px;
+	padding: 0px;
+	width: 100%;
+	height: 40px;
+	color: black;
+	background-color: white;
+}
+div#header div{
+	margin:0 auto;
+	padding-left: 4px;
+	padding-right: 4px;
+	font-size: 2em;
+	font-weight: bold;
+	text-align: center;
+}
+body>div#header{
+	position: fixed;
+}
+div#footer{
+	position:absolute;
+	z-index: 1;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 24px;
+	color:black;
+	background-color:#cd4700;
+	border-top: 8px solid black;
+}
+div#footer div{
+	padding-top: 2px;
+	padding-left: 4px;
+	padding-right: 4px;
+	text-align: center;
+}
+body>div#footer{
+	position:fixed;
+}
+div#content{
+	position: absolute;
+	z-index: 0;
+	width: 100%;
+	margin: 0px;
+	margin-top: 140px;
+	padding: 0px;
+	padding-bottom: 32px;
+}
+
+#gallery{
+	padding: 0px 10px;
+}
+#gallery-space{
+	clear:both;
+}
+
+div.thumbnail{
+	position: relative;
+	float:left;
+	width: 184px;
+	height: 178px;
+	margin: 0px;
+	padding: 0px;
+	padding-top: 6px;
+	text-align: center;
+	background-image: url("../images/tt.png");
+	border: none;
+}
+div.thumbnail:hover{
+	background-color: #ddd;
+}
+div.thumbnail span{
+	line-height: 162px;
+} 
+div.thumbnail .info{
+	position: absolute;
+	vertical-align: middle;
+	left: 10px;
+	top: 10px;
+	font-size: x-small;
+	color: #999;
+	background: transparent;
+}
+div.thumbnail *{
+	vertical-align: middle;
+} 
+div.thumbnail img{
+	vertical-align: middle;
+	margin: 0px;
+	padding: 0px;
+	border-top: solid 1px #999;
+	border-left: solid 1px #999;
+	border-right: solid 1px #eee;
+	border-bottom: solid 1px #eee;
+}
+
+.logo{
+	margin-left: 2px;
+	margin-right: 2px;
+}

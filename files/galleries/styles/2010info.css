@@ -1,0 +1,32 @@
+.Info_container{
+	margin: auto;
+	padding: 0px;
+}
+.Info{
+	display: none;
+	position: absolute;
+	top: 10px;
+	color: black;
+	background-color: transparent;
+	border: solid 1px transparent;
+	padding: 8px;
+	opacity:0.4;
+	text-align: left;
+}
+.Info_head{
+        padding: 0px 0px 2px 0px;
+}
+.Info_headicon{
+	width: 16px;
+	height: 16px;
+	border: none;
+	float: right;
+	padding: 0px 0px 0px 2px;
+	cursor: pointer;
+}
+.Info_text{
+	display: none;
+	text-align: left;
+	font-size: small;
+	font-family: verdana, arial, helvetica, sans-serif;
+}
