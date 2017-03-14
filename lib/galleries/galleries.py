@@ -47,7 +47,7 @@ class Gallery:
         c = []
         if format == 'long':
             for alpha2 in self.countries:
-                country = pycountry.countries.get(alpha2=alpha2)
+                country = pycountry.countries.get(alpha_2=alpha2)
                 if country:
                     c.append(_(country.name))
         elif format == 'short':

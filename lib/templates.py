@@ -10,7 +10,7 @@ from tidylib import tidy_document
 
 from json import dumps as encode_json
 
-import pyphen
+import pyphen, html5lib
 
 class TemplateEngine:
     def __init__(self, template_path):
