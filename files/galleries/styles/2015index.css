@@ -308,93 +308,38 @@ ul#gallery li span.flag {
     z-index:-1;
     opacity:0.5;
 }
+ul#gallery li span.flag-AE { background: url('../images/flags/AE.svg')  92px   0px/116px 58px no-repeat; }
+ul#gallery li span.flag-AT { background: url('../images/flags/AT.svg')  92px -15px/110px 73px no-repeat; }
+ul#gallery li span.flag-AU { background: url('../images/flags/AU.svg')  92px   0px/116px 58px no-repeat; }
+ul#gallery li span.flag-BE { background: url('../images/flags/BE.svg')  92px -15px/110px 73px no-repeat; }
+ul#gallery li span.flag-CA { background: url('../images/flags/CA.svg')  92px   0px/116px 58px no-repeat; }
+ul#gallery li span.flag-CH { background: url('../images/flags/CH.svg') 126px -12px/ 70px 70px no-repeat; }
+ul#gallery li span.flag-CR { background: url('../images/flags/CR.svg')  92px -12px/116px 70px no-repeat; }
+ul#gallery li span.flag-CU { background: url('../images/flags/CU.svg')  92px   0px/116px 58px no-repeat; }
+ul#gallery li span.flag-DE { background: url('../images/flags/DE.svg')  92px -12px/116px 70px no-repeat; }
+ul#gallery li span.flag-FI { background: url('../images/flags/FI.svg')  92px -12px/116px 70px no-repeat; }
+ul#gallery li span.flag-FR { background: url('../images/flags/FR.svg')  92px -15px/110px 73px no-repeat; }
+ul#gallery li span.flag-GB { background: url('../images/flags/GB.svg')  92px   0px/116px 58px no-repeat; }
+ul#gallery li span.flag-IT { background: url('../images/flags/IT.svg')  92px -15px/110px 73px no-repeat; }
+ul#gallery li span.flag-JP { background: url('../images/flags/JP.svg')  92px -15px/110px 73px no-repeat; }
+ul#gallery li span.flag-PT { background: url('../images/flags/PT.svg')  92px -15px/110px 73px no-repeat; }
+ul#gallery li span.flag-RO { background: url('../images/flags/RO.svg')  92px -15px/110px 73px no-repeat; }
+ul#gallery li span.flag-SG { background: url('../images/flags/SG.svg')  92px -15px/110px 73px no-repeat; }
+ul#gallery li span.flag-TH { background: url('../images/flags/TH.svg')  92px -15px/110px 73px no-repeat; }
+ul#gallery li span.flag-US { background: url('../images/flags/US.svg')  90px   0px/116px 58px no-repeat; }
+ul#gallery li span.flag-FRESPT { background: url('../images/flags/FRESPT.png') 92px -15px/110px 73px no-repeat; }
 ul#gallery li span.flag:before {
     content: "";
     display: block;
     position: absolute;
     top: 0;
     right: 0;
-    width:92px;
-    height:58px;
+    width: 92px;
+    height: 58px;
     background: rgba(255,255,255,0.25);
 }
-ul#gallery li span.flag-AE {
-    background:url('../images/flags/AE.svg');
-    background-size:116px 58px;
-    background-position:92px 0px;
-    background-repeat:no-repeat;
-}
-ul#gallery li span.flag-BE {
-    background:url('../images/flags/BE.svg');
-    background-size:110px 73px;
-    background-position:92px -15px;
-    background-repeat:no-repeat;
-}
-ul#gallery li span.flag-CA {
-    background:url('../images/flags/CA.svg');
-    background-size:116px 58px;
-    background-position:92px 0px;
-    background-repeat:no-repeat;
-}
-ul#gallery li span.flag-CU {
-    background:url('../images/flags/CU.svg');
-    background-size:116px 58px;
-    background-position:92px 0px;
-    background-repeat:no-repeat;
-}
-ul#gallery li span.flag-DE {
-    background:url('../images/flags/DE.svg');
-    background-size:116px 70px;
-    background-position:92px -12px;
-    background-repeat:no-repeat;
-}
-ul#gallery li span.flag-FR {
-    background:url('../images/flags/FR.svg');
-    background-size:110px 73px;
-    background-position:92px -15px;
-    background-repeat:no-repeat;
-}
-ul#gallery li span.flag-FRESPT {
-    background:url('../images/flags/FRESPT.png');
-    background-size:110px 73px;
-    background-position:92px -15px;
-    background-repeat:no-repeat;
-}
-ul#gallery li span.flag-GB {
-    background:url('../images/flags/GB.svg');
-    background-size:116px 58px;
-    background-position:92px 0px;
-    background-repeat:no-repeat;
-}
-ul#gallery li span.flag-IT {
-    background:url('../images/flags/IT.svg');
-    background-size:110px 73px;
-    background-position:92px -15px;
-    background-repeat:no-repeat;
-}
-ul#gallery li span.flag-JP {
-    background:url('../images/flags/JP.svg');
-    background-size:110px 73px;
-    background-position:92px -15px;
-    background-repeat:no-repeat;
-}
-ul#gallery li span.flag-PT {
-    background:url('../images/flags/PT.svg');
-    background-size:110px 73px;
-    background-position:92px -15px;
-    background-repeat:no-repeat;
-}
-ul#gallery li span.flag-RO {
-    background:url('../images/flags/RO.svg');
-    background-size:110px 73px;
-    background-position:92px -15px;
-    background-repeat:no-repeat;
-}
-ul#gallery li span.flag-US {
-    background-image:url('../images/flags/US.svg');
-    background-size:116px 58px;
-    background-position:90px 0px;
-    background-repeat:no-repeat;
+ul#gallery li span.flag-CH:before {
+    width: 58px;
 }
 ul#gallery li span.image a {
     display:inline-block;
